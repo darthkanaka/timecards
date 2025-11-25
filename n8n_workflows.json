@@ -1,0 +1,149 @@
+{
+  "workflows": [
+    {
+      "name": "Invoice Submission Handler",
+      "description": "Triggered when a contractor submits their timecard. Sends notification emails and checks if all contractors have submitted.",
+      "nodes": [
+        {
+          "type": "n8n-nodes-base.webhook",
+          "name": "Webhook",
+          "parameters": {
+            "path": "timecard",
+            "method": "POST"
+          }
+        },
+        {
+          "type": "n8n-nodes-base.if",
+          "name": "Check Event Type",
+          "parameters": {
+            "conditions": {
+              "string": [
+                {
+                  "value1": "={{$json.event}}",
+                  "value2": "invoice_submitted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "n8n-nodes-base.supabase",
+          "name": "Get Contractor",
+          "parameters": {
+            "operation": "get",
+            "tableId": "contractors",
+            "filters": {
+              "id": "={{$json.contractorId}}"
+            }
+          }
+        },
+        {
+          "type": "n8n-nodes-base.emailSend",
+          "name": "Email Admin",
+          "parameters": {
+            "to": "admin@yourcompany.com",
+            "subject": "New Timecard Submitted - {{$node['Get Contractor'].json.name}}",
+            "text": "{{$node['Get Contractor'].json.name}} has submitted their timecard for the pay period {{$json.invoice.pay_period_start}} to {{$json.invoice.pay_period_end}}.\n\nTotal Hours: {{$json.invoice.week_1_hours + $json.invoice.week_2_hours}}\nTotal Amount: ${{$json.invoice.total_amount}}\n\nView in admin dashboard: https://your-app.com/admin"
+          }
+        },
+        {
+          "type": "n8n-nodes-base.emailSend",
+          "name": "Email Contractor",
+          "parameters": {
+            "to": "={{$node['Get Contractor'].json.email}}",
+            "subject": "Timecard Submitted Successfully",
+            "text": "Hi {{$node['Get Contractor'].json.name}},\n\nYour timecard has been submitted successfully for the pay period {{$json.invoice.pay_period_start}} to {{$json.invoice.pay_period_end}}.\n\nTotal Hours: {{$json.invoice.week_1_hours + $json.invoice.week_2_hours}}\nTotal Amount: ${{$json.invoice.total_amount}}\n\nYou can view your invoice status at: https://your-app.com/timecard/{{$node['Get Contractor'].json.url_token}}\n\nThank you!"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Status Change Notifier",
+      "description": "Sends email notification to contractor when their invoice status changes.",
+      "nodes": [
+        {
+          "type": "n8n-nodes-base.webhook",
+          "name": "Webhook",
+          "parameters": {
+            "path": "timecard",
+            "method": "POST"
+          }
+        },
+        {
+          "type": "n8n-nodes-base.if",
+          "name": "Check Event Type",
+          "parameters": {
+            "conditions": {
+              "string": [
+                {
+                  "value1": "={{$json.event}}",
+                  "value2": "status_changed"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "n8n-nodes-base.supabase",
+          "name": "Get Contractor",
+          "parameters": {
+            "operation": "get",
+            "tableId": "contractors",
+            "filters": {
+              "id": "={{$json.invoice.contractor_id}}"
+            }
+          }
+        },
+        {
+          "type": "n8n-nodes-base.emailSend",
+          "name": "Email Status Update",
+          "parameters": {
+            "to": "={{$node['Get Contractor'].json.email}}",
+            "subject": "Invoice Status Updated - {{$json.newStatus}}",
+            "text": "Hi {{$node['Get Contractor'].json.name}},\n\nYour invoice status has been updated.\n\nPrevious Status: {{$json.previousStatus}}\nNew Status: {{$json.newStatus}}\n\nView your invoice at: https://your-app.com/timecard/{{$node['Get Contractor'].json.url_token}}\n\nThank you!"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Period Summary",
+      "description": "Sends summary email to admins when all contractors have submitted for a pay period.",
+      "nodes": [
+        {
+          "type": "n8n-nodes-base.supabase",
+          "name": "Get All Invoices",
+          "parameters": {
+            "operation": "getAll",
+            "tableId": "invoices",
+            "filters": {
+              "pay_period_start": "={{$json.payPeriodStart}}"
+            }
+          }
+        },
+        {
+          "type": "n8n-nodes-base.function",
+          "name": "Calculate Totals",
+          "parameters": {
+            "code": "const invoices = items[0].json;\nlet totalHours = 0;\nlet totalAmount = 0;\n\nfor (const inv of invoices) {\n  totalHours += (inv.week_1_hours || 0) + (inv.week_2_hours || 0);\n  totalAmount += inv.total_amount || 0;\n}\n\nreturn [{ json: { totalHours, totalAmount, count: invoices.length } }];"
+          }
+        },
+        {
+          "type": "n8n-nodes-base.emailSend",
+          "name": "Email Summary",
+          "parameters": {
+            "to": "admin@yourcompany.com",
+            "subject": "All Timecards Submitted - Period Summary",
+            "text": "All contractors have submitted their timecards for this pay period.\n\nSummary:\n- Total Contractors: {{$json.count}}\n- Total Hours: {{$json.totalHours}}\n- Total Amount: ${{$json.totalAmount}}\n\nView details in admin dashboard: https://your-app.com/admin"
+          }
+        }
+      ]
+    }
+  ],
+  "setup_instructions": [
+    "1. Import this file into your n8n instance",
+    "2. Update the webhook URLs in your application to point to your n8n webhooks",
+    "3. Configure the Supabase node with your credentials",
+    "4. Update email credentials and recipient addresses",
+    "5. Activate the workflows"
+  ]
+}
