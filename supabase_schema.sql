@@ -9,6 +9,9 @@ CREATE TABLE contractors (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   email TEXT NOT NULL,
+  company TEXT,
+  address TEXT,
+  phone TEXT,
   default_hourly_rate DECIMAL(10, 2) NOT NULL DEFAULT 0,
   url_token TEXT UNIQUE NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT true,
@@ -115,15 +118,6 @@ CREATE POLICY "Allow public update invoices"
   ON invoices FOR UPDATE
   USING (true);
 
--- Sample data for testing (optional)
--- Uncomment to insert test contractors
-
-/*
-INSERT INTO contractors (name, email, default_hourly_rate, url_token) VALUES
-  ('John Smith', 'john@example.com', 75.00, 'abc123'),
-  ('Jane Doe', 'jane@example.com', 85.00, 'def456'),
-  ('Bob Wilson', 'bob@example.com', 65.00, 'ghi789'),
-  ('Alice Johnson', 'alice@example.com', 90.00, 'jkl012'),
-  ('Charlie Brown', 'charlie@example.com', 70.00, 'mno345'),
-  ('Diana Prince', 'diana@example.com', 80.00, 'pqr678');
-*/
+-- Initial contractor data
+INSERT INTO contractors (name, email, company, address, phone, default_hourly_rate, url_token) VALUES
+  ('Dave Lopez', 'dave@veexphoto.com', 'Veex Photo LLC', '1631 Kapiolani Blvd. #806 Honolulu, HI 96814', '808-232-6959', 75.00, 'veex-dave');
