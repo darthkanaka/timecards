@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Timecard from './pages/Timecard';
 import Admin from './pages/Admin';
 import './index.css';
@@ -14,12 +14,12 @@ function HomePage() {
           Please use your unique timecard link to submit your hours.
         </p>
         <div className="space-y-3">
-          <a
-            href="/admin"
+          <Link
+            to="/admin"
             className="block w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
           >
             Admin Dashboard
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -49,12 +49,12 @@ function NotFound() {
         <p className="text-gray-600 mb-4">
           The page you're looking for doesn't exist.
         </p>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="inline-block py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
         >
           Go Home
-        </a>
+        </Link>
       </div>
     </div>
   );
@@ -62,7 +62,7 @@ function NotFound() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/timecard/:token" element={<Timecard />} />
@@ -70,6 +70,6 @@ export default function App() {
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
