@@ -7,14 +7,39 @@ export default function PayPeriodNav({ payPeriod, onPrevious, onNext }) {
   });
 
   return (
-    <div className="flex items-center justify-between card-dark p-3">
+    <div className="flex items-center justify-between" style={{
+      backgroundColor: '#0d1b2a',
+      border: '1px solid #2d3f50',
+      borderRadius: '8px',
+      padding: '16px 20px'
+    }}>
       <button
         onClick={onPrevious}
-        className="p-2 rounded-lg hover:bg-dark-elevated transition-colors text-text-secondary hover:text-white"
+        style={{
+          padding: '10px',
+          borderRadius: '8px',
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: '#8a94a6',
+          cursor: 'pointer',
+          transition: 'all 0.2s',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#1b2838';
+          e.currentTarget.style.color = '#ffffff';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = '#8a94a6';
+        }}
         title="Previous pay period"
       >
         <svg
-          className="w-5 h-5"
+          width="22"
+          height="22"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -29,29 +54,47 @@ export default function PayPeriodNav({ payPeriod, onPrevious, onNext }) {
       </button>
 
       <div className="text-center">
-        <p className="text-sm font-medium text-white">
+        <p style={{ fontSize: '18px', fontWeight: '500', color: '#ffffff' }}>
           {getPayPeriodLabel(payPeriod)}
         </p>
         {isCurrent && (
-          <span className="text-xs text-status-info-text font-medium">Current Period</span>
+          <span style={{ fontSize: '12px', color: '#60a5fa', fontWeight: '500' }}>Current Period</span>
         )}
         {!isCurrent && !isFuturePeriod(payPeriod) && (
-          <span className="text-xs text-text-muted">Past Period</span>
+          <span style={{ fontSize: '12px', color: '#5a6478' }}>Past Period</span>
         )}
       </div>
 
       <button
         onClick={onNext}
         disabled={nextPeriodIsFuture}
-        className={`p-2 rounded-lg transition-colors ${
-          nextPeriodIsFuture
-            ? 'text-text-muted cursor-not-allowed'
-            : 'hover:bg-dark-elevated text-text-secondary hover:text-white'
-        }`}
+        style={{
+          padding: '10px',
+          borderRadius: '8px',
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: nextPeriodIsFuture ? '#3d4f5f' : '#8a94a6',
+          cursor: nextPeriodIsFuture ? 'not-allowed' : 'pointer',
+          transition: 'all 0.2s',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        onMouseEnter={(e) => {
+          if (!nextPeriodIsFuture) {
+            e.currentTarget.style.backgroundColor = '#1b2838';
+            e.currentTarget.style.color = '#ffffff';
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = nextPeriodIsFuture ? '#3d4f5f' : '#8a94a6';
+        }}
         title={nextPeriodIsFuture ? "Can't view future periods" : 'Next pay period'}
       >
         <svg
-          className="w-5 h-5"
+          width="22"
+          height="22"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

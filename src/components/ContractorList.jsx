@@ -1,8 +1,22 @@
 export default function ContractorList({ contractors, notSubmitted = [], isLoading = false }) {
   if (isLoading) {
     return (
-      <div className="card-dark p-6 text-center">
-        <div className="w-6 h-6 border-2 border-text-secondary border-t-white rounded-full animate-spin mx-auto"></div>
+      <div style={{
+        backgroundColor: '#0d1b2a',
+        border: '1px solid #2d3f50',
+        borderRadius: '8px',
+        padding: '32px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          width: '24px',
+          height: '24px',
+          border: '2px solid #3d4f5f',
+          borderTopColor: '#ffffff',
+          borderRadius: '50%',
+          margin: '0 auto',
+          animation: 'spin 1s linear infinite'
+        }}></div>
       </div>
     );
   }
@@ -10,61 +24,114 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
   const notSubmittedIds = new Set(notSubmitted.map((c) => c.id));
 
   return (
-    <div className="card-dark overflow-hidden">
-      <div className="px-4 py-3 border-b border-dark-border flex items-center justify-between">
-        <h3 className="text-sm font-medium text-text-secondary uppercase tracking-wider">Contractors</h3>
-        <span className="text-xs text-text-muted">
+    <div style={{
+      backgroundColor: '#0d1b2a',
+      border: '1px solid #2d3f50',
+      borderRadius: '8px',
+      overflow: 'hidden'
+    }}>
+      <div style={{
+        padding: '14px 16px',
+        borderBottom: '1px solid #2d3f50',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <h3 style={{
+          fontSize: '11px',
+          fontWeight: '500',
+          color: '#8a94a6',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em'
+        }}>
+          Contractors
+        </h3>
+        <span style={{ fontSize: '12px', color: '#5a6478' }}>
           {contractors?.length || 0} total
         </span>
       </div>
 
       {notSubmitted.length > 0 && (
-        <div className="px-4 py-2 bg-status-warning/20 border-b border-status-warning/30">
-          <p className="text-xs text-status-warning-text">
-            <span className="font-medium">{notSubmitted.length}</span> contractor(s)
+        <div style={{
+          padding: '10px 16px',
+          backgroundColor: 'rgba(251, 191, 36, 0.15)',
+          borderBottom: '1px solid rgba(251, 191, 36, 0.25)'
+        }}>
+          <p style={{ fontSize: '12px', color: '#fbbf24' }}>
+            <span style={{ fontWeight: '500' }}>{notSubmitted.length}</span> contractor(s)
             have not submitted for the current period
           </p>
         </div>
       )}
 
-      <div className="divide-y divide-dark-border">
+      <div>
         {(!contractors || contractors.length === 0) ? (
-          <div className="p-4 text-center text-text-secondary text-sm">
-            No contractors found.
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <p style={{ color: '#8a94a6', fontSize: '14px' }}>
+              No contractors found.
+            </p>
           </div>
         ) : (
-          contractors.map((contractor) => {
+          contractors.map((contractor, idx) => {
             const hasNotSubmitted = notSubmittedIds.has(contractor.id);
 
             return (
               <div
                 key={contractor.id}
-                className={`p-4 ${hasNotSubmitted ? 'bg-status-warning/10' : ''}`}
+                style={{
+                  padding: '16px',
+                  borderBottom: idx < contractors.length - 1 ? '1px solid #2d3f50' : 'none',
+                  backgroundColor: hasNotSubmitted ? 'rgba(251, 191, 36, 0.08)' : 'transparent'
+                }}
               >
-                <div className="flex items-center justify-between">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#ffffff' }}>
                       {contractor.name}
                     </p>
-                    <p className="text-xs text-text-muted">{contractor.email}</p>
+                    <p style={{ fontSize: '12px', color: '#5a6478' }}>{contractor.email}</p>
                   </div>
-                  <div className="text-right">
+                  <div style={{ textAlign: 'right' }}>
                     {hasNotSubmitted ? (
-                      <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-status-warning text-status-warning-text rounded-full">
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        backgroundColor: 'rgba(251, 191, 36, 0.2)',
+                        color: '#fbbf24',
+                        borderRadius: '9999px'
+                      }}>
                         Not Submitted
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-status-success text-status-success-text rounded-full">
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        backgroundColor: 'rgba(52, 211, 153, 0.2)',
+                        color: '#34d399',
+                        borderRadius: '9999px'
+                      }}>
                         Submitted
                       </span>
                     )}
-                    <p className="text-xs text-text-muted mt-1">
+                    <p style={{ fontSize: '12px', color: '#5a6478', marginTop: '6px' }}>
                       ${contractor.default_hourly_rate}/hr
                     </p>
                   </div>
                 </div>
-                <div className="mt-2">
-                  <code className="text-xs text-text-muted bg-dark-elevated px-2 py-0.5 rounded">
+                <div style={{ marginTop: '10px' }}>
+                  <code style={{
+                    fontSize: '11px',
+                    color: '#5a6478',
+                    backgroundColor: '#1b2838',
+                    padding: '4px 8px',
+                    borderRadius: '4px'
+                  }}>
                     /timecard/{contractor.url_token}
                   </code>
                 </div>

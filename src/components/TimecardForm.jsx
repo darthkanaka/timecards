@@ -54,43 +54,88 @@ export default function TimecardForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit}>
       {/* Contractor Info */}
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="label-dark">Contractor Name</label>
-            <div className="text-white font-medium py-2 border-b border-dark-border">
-              {contractor?.name || 'Unknown'}
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <div>
+          <label style={{
+            display: 'block',
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#8a94a6',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '12px'
+          }}>
+            Contractor Name
+          </label>
+          <div style={{
+            color: '#ffffff',
+            fontWeight: '500',
+            fontSize: '16px',
+            paddingBottom: '10px',
+            borderBottom: '1px solid #2d3f50'
+          }}>
+            {contractor?.name || 'Unknown'}
           </div>
-          <div>
-            <label className="label-dark">Pay Period</label>
-            <div className="text-white font-medium py-2 border-b border-dark-border">
-              {getPayPeriodLabel(payPeriod)}
-            </div>
+        </div>
+        <div>
+          <label style={{
+            display: 'block',
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#8a94a6',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '12px'
+          }}>
+            Pay Period
+          </label>
+          <div style={{
+            color: '#ffffff',
+            fontWeight: '500',
+            fontSize: '16px',
+            paddingBottom: '10px',
+            borderBottom: '1px solid #2d3f50'
+          }}>
+            {getPayPeriodLabel(payPeriod)}
           </div>
         </div>
       </div>
 
-      {/* Week Rows */}
-      <div className="space-y-6">
-        <h2 className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+      {/* Week Rows Section */}
+      <div className="mb-10">
+        <h2 style={{
+          fontSize: '14px',
+          fontWeight: '500',
+          color: '#8a94a6',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          marginBottom: '24px'
+        }}>
           Hours & Rates
         </h2>
 
-        <WeekRow
-          weekNumber={1}
-          weekStart={payPeriod.week1.start}
-          weekEnd={payPeriod.week1.end}
-          hours={formData.week1Hours}
-          rate={formData.week1Rate}
-          notes={formData.week1Notes}
-          onHoursChange={(v) => setFormData({ ...formData, week1Hours: v })}
-          onRateChange={(v) => setFormData({ ...formData, week1Rate: v })}
-          onNotesChange={(v) => setFormData({ ...formData, week1Notes: v })}
-          readOnly={readOnly}
-        />
+        <div style={{ marginBottom: '24px' }}>
+          <WeekRow
+            weekNumber={1}
+            weekStart={payPeriod.week1.start}
+            weekEnd={payPeriod.week1.end}
+            hours={formData.week1Hours}
+            rate={formData.week1Rate}
+            notes={formData.week1Notes}
+            onHoursChange={(v) => setFormData({ ...formData, week1Hours: v })}
+            onRateChange={(v) => setFormData({ ...formData, week1Rate: v })}
+            onNotesChange={(v) => setFormData({ ...formData, week1Notes: v })}
+            readOnly={readOnly}
+          />
+        </div>
+
+        {/* Divider between weeks */}
+        <div style={{
+          borderTop: '1px solid #2d3f50',
+          margin: '32px 0'
+        }}></div>
 
         <WeekRow
           weekNumber={2}
@@ -107,9 +152,19 @@ export default function TimecardForm({
       </div>
 
       {/* Tax Rate */}
-      <div className="space-y-4">
+      <div className="mb-10">
         <div className="max-w-xs">
-          <label className="label-dark">Tax Rate (optional)</label>
+          <label style={{
+            display: 'block',
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#8a94a6',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '12px'
+          }}>
+            Tax Rate (optional)
+          </label>
           <div className="flex items-center gap-4">
             <input
               type="number"
@@ -119,50 +174,65 @@ export default function TimecardForm({
               value={formData.taxRate}
               onChange={(e) => setFormData({ ...formData, taxRate: e.target.value })}
               disabled={readOnly}
-              className="input-underline w-32"
+              className="input-underline"
+              style={{ width: '140px', height: '42px', fontSize: '16px' }}
               placeholder="0.04712"
             />
-            <span className="text-xs text-text-muted">e.g., 0.04712 for Hawaii GET</span>
+            <span style={{ fontSize: '12px', color: '#5a6478' }}>e.g., 0.04712 for Hawaii GET</span>
           </div>
         </div>
       </div>
 
-      {/* Totals */}
-      <div className="card-dark p-6">
-        <h2 className="text-xs font-medium text-text-secondary uppercase tracking-wider mb-4">
+      {/* Summary */}
+      <div className="card-dark p-8 mb-10">
+        <h2 style={{
+          fontSize: '14px',
+          fontWeight: '500',
+          color: '#8a94a6',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          marginBottom: '20px'
+        }}>
           Summary
         </h2>
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-text-secondary">Week 1 Total</span>
-            <span className="text-white font-medium">${week1Amount.toFixed(2)}</span>
+        <div>
+          <div className="flex justify-between" style={{ marginBottom: '12px' }}>
+            <span style={{ fontSize: '15px', color: '#8a94a6' }}>Week 1 Total</span>
+            <span style={{ fontSize: '15px', color: '#ffffff', fontWeight: '500' }}>${week1Amount.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-text-secondary">Week 2 Total</span>
-            <span className="text-white font-medium">${week2Amount.toFixed(2)}</span>
+          <div className="flex justify-between" style={{ marginBottom: '12px' }}>
+            <span style={{ fontSize: '15px', color: '#8a94a6' }}>Week 2 Total</span>
+            <span style={{ fontSize: '15px', color: '#ffffff', fontWeight: '500' }}>${week2Amount.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-sm text-text-muted">
-            <span>Total Hours</span>
-            <span>{formData.week1Hours + formData.week2Hours} hours</span>
+          <div className="flex justify-between" style={{ marginBottom: '16px' }}>
+            <span style={{ fontSize: '14px', color: '#5a6478' }}>Total Hours</span>
+            <span style={{ fontSize: '14px', color: '#5a6478' }}>{formData.week1Hours + formData.week2Hours} hours</span>
           </div>
 
-          <div className="flex justify-between text-sm pt-3 border-t border-dark-border">
-            <span className="text-text-secondary font-medium">Subtotal</span>
-            <span className="text-white font-medium">${subtotal.toFixed(2)}</span>
+          <div className="flex justify-between" style={{
+            paddingTop: '16px',
+            borderTop: '1px solid #2d3f50',
+            marginBottom: '12px'
+          }}>
+            <span style={{ fontSize: '15px', color: '#8a94a6', fontWeight: '500' }}>Subtotal</span>
+            <span style={{ fontSize: '15px', color: '#ffffff', fontWeight: '500' }}>${subtotal.toFixed(2)}</span>
           </div>
 
           {taxRateValue > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-text-secondary">
+            <div className="flex justify-between" style={{ marginBottom: '12px' }}>
+              <span style={{ fontSize: '15px', color: '#8a94a6' }}>
                 Tax ({(taxRateValue * 100).toFixed(3)}%)
               </span>
-              <span className="text-white font-medium">${taxAmount.toFixed(2)}</span>
+              <span style={{ fontSize: '15px', color: '#ffffff', fontWeight: '500' }}>${taxAmount.toFixed(2)}</span>
             </div>
           )}
 
-          <div className="flex justify-between pt-3 border-t border-dark-border">
-            <span className="text-white font-semibold">Total Amount</span>
-            <span className="text-xl font-bold text-status-success-text">
+          <div className="flex justify-between items-center" style={{
+            paddingTop: '16px',
+            borderTop: '1px solid #2d3f50'
+          }}>
+            <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>Total Amount</span>
+            <span style={{ fontSize: '24px', fontWeight: '700', color: '#4ade80' }}>
               ${totalAmount.toFixed(2)}
             </span>
           </div>
@@ -174,23 +244,32 @@ export default function TimecardForm({
         <button
           type="submit"
           disabled={isSubmitting || subtotal === 0}
-          className={`w-full py-4 px-6 rounded-lg font-medium text-white transition-all duration-200 ${
-            isSubmitting || subtotal === 0
-              ? 'bg-accent/50 cursor-not-allowed'
+          style={{
+            width: '100%',
+            padding: '18px 24px',
+            borderRadius: '8px',
+            fontWeight: '500',
+            fontSize: '16px',
+            color: '#ffffff',
+            backgroundColor: isSubmitting || subtotal === 0
+              ? 'rgba(61, 79, 95, 0.5)'
               : isResubmission
-                ? 'bg-status-warning hover:bg-status-warning/80'
-                : 'bg-accent hover:bg-accent-hover'
-          }`}
+                ? '#5a4d2d'
+                : '#3d4f5f',
+            cursor: isSubmitting || subtotal === 0 ? 'not-allowed' : 'pointer',
+            transition: 'background-color 0.2s',
+            border: 'none'
+          }}
         >
           {isSubmitting ? 'Submitting...' : isResubmission ? 'Resubmit Timecard' : 'Submit Timecard'}
         </button>
       )}
 
       {readOnly && existingInvoice && (
-        <div className="card-dark p-4 text-center">
-          <p className="text-sm text-text-secondary">
+        <div className="card-dark p-5 text-center">
+          <p style={{ fontSize: '14px', color: '#8a94a6' }}>
             This timecard has already been submitted and is currently in{' '}
-            <span className="text-white font-medium">{existingInvoice.status.replace('_', ' ')}</span> status.
+            <span style={{ color: '#ffffff', fontWeight: '500' }}>{existingInvoice.status.replace('_', ' ')}</span> status.
           </p>
         </div>
       )}

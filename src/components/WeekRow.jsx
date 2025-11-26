@@ -16,15 +16,29 @@ export default function WeekRow({
   const amount = (hours || 0) * (rate || 0);
 
   return (
-    <div className="card-dark p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-white font-medium">Week {weekNumber}</h3>
-        <span className="text-text-secondary text-sm">{dateRange}</span>
+    <div>
+      {/* Week Header */}
+      <div className="flex items-center justify-between" style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '19px', color: '#ffffff', fontWeight: '500' }}>
+          Week {weekNumber}
+        </h3>
+        <span style={{ fontSize: '14px', color: '#8a94a6' }}>{dateRange}</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      {/* Input Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ marginBottom: '24px' }}>
         <div>
-          <label className="label-dark">Hours Worked</label>
+          <label style={{
+            display: 'block',
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#8a94a6',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '14px'
+          }}>
+            Hours Worked
+          </label>
           <input
             type="number"
             min="0"
@@ -34,12 +48,23 @@ export default function WeekRow({
             onChange={(e) => onHoursChange(parseFloat(e.target.value) || 0)}
             disabled={readOnly}
             className="input-underline"
+            style={{ height: '44px', fontSize: '16px' }}
             placeholder="0"
           />
         </div>
 
         <div>
-          <label className="label-dark">Hourly Rate ($)</label>
+          <label style={{
+            display: 'block',
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#8a94a6',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '14px'
+          }}>
+            Hourly Rate ($)
+          </label>
           <input
             type="number"
             min="0"
@@ -48,26 +73,67 @@ export default function WeekRow({
             onChange={(e) => onRateChange(parseFloat(e.target.value) || 0)}
             disabled={readOnly}
             className="input-underline"
+            style={{ height: '44px', fontSize: '16px' }}
             placeholder="0.00"
           />
         </div>
 
         <div>
-          <label className="label-dark">Amount</label>
-          <div className="text-white font-medium py-2 border-b border-dark-border">
+          <label style={{
+            display: 'block',
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#8a94a6',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '14px'
+          }}>
+            Amount
+          </label>
+          <div style={{
+            color: '#ffffff',
+            fontWeight: '500',
+            fontSize: '16px',
+            height: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: '1px solid #2d3f50'
+          }}>
             ${amount.toFixed(2)}
           </div>
         </div>
       </div>
 
+      {/* Notes */}
       <div>
-        <label className="label-dark">Work Description / Notes</label>
+        <label style={{
+          display: 'block',
+          fontSize: '11px',
+          fontWeight: '500',
+          color: '#8a94a6',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          marginBottom: '14px'
+        }}>
+          Work Description / Notes
+        </label>
         <textarea
           value={notes || ''}
           onChange={(e) => onNotesChange(e.target.value)}
           disabled={readOnly}
-          rows={2}
-          className="input-underline resize-none"
+          style={{
+            width: '100%',
+            minHeight: '110px',
+            backgroundColor: 'transparent',
+            border: 'none',
+            borderBottom: '1px solid #2d3f50',
+            color: '#ffffff',
+            fontSize: '16px',
+            padding: '10px 0',
+            outline: 'none',
+            resize: 'none',
+            fontFamily: 'inherit'
+          }}
           placeholder="Describe work completed this week..."
         />
       </div>
