@@ -9,6 +9,7 @@ import {
 import { formatDateRange } from '../lib/payPeriod';
 
 const LOGO_URL = "https://static.wixstatic.com/media/edda46_11cebb29dd364966929fec216683b3f3~mv2.png/v1/fill/w_486,h_344,al_c,lg_1,q_85,enc_avif,quality_auto/IA%20LOGO.png";
+const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/1a53ba70-7df5-4bfd-8896-3dbf6f6ba03c/DJI_0626-HDR-Pano.jpg?content-type=image%2Fjpeg";
 
 function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
   const [showRejectForm, setShowRejectForm] = useState(false);
@@ -29,7 +30,12 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
   };
 
   return (
-    <div className="card-dark overflow-hidden">
+    <div style={{
+      backgroundColor: '#0d1b2a',
+      border: '1px solid #2d3f50',
+      borderRadius: '12px',
+      overflow: 'hidden'
+    }}>
       {/* Header */}
       <div style={{ padding: '20px 24px', borderBottom: '1px solid #2d3f50' }}>
         <div className="flex items-center justify-between">
@@ -155,7 +161,7 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
                 fontWeight: '500',
                 fontSize: '15px',
                 cursor: isProcessing ? 'not-allowed' : 'pointer',
-                backgroundColor: isProcessing ? '#1b2838' : '#1b2838',
+                backgroundColor: '#1b2838',
                 color: isProcessing ? '#5a6478' : '#f87171',
                 border: '1px solid rgba(248, 113, 113, 0.5)',
                 transition: 'background-color 0.2s'
@@ -344,21 +350,74 @@ export default function ApproverDashboard() {
 
   if (error && !approver) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#0a1628' }}>
-        {/* Header with logo */}
-        <div style={{ padding: '24px' }}>
-          <img src={LOGO_URL} alt="InvizArts" style={{ width: '90px', height: 'auto' }} />
+      <div className="min-h-screen" style={{ backgroundColor: '#0a1628' }}>
+        {/* Fixed Background Image - full viewport */}
+        <div
+          className="hidden lg:block"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100vh',
+            zIndex: 0
+          }}
+        >
+          <img
+            src={BG_IMAGE_URL}
+            alt=""
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center center'
+            }}
+          />
+          <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}></div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="card-dark p-10 max-w-md w-full text-center">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#5a2d2d' }}>
-              <svg className="w-8 h-8" style={{ color: '#f87171' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Fixed Logo */}
+        <img
+          src={LOGO_URL}
+          alt="InvizArts"
+          className="hidden lg:block"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '24px',
+            width: '90px',
+            height: 'auto',
+            zIndex: 50
+          }}
+        />
+
+        {/* Centered Content Panel */}
+        <div className="min-h-screen flex items-center justify-center p-6" style={{ position: 'relative', zIndex: 10 }}>
+          <div style={{
+            backgroundColor: '#0d1b2a',
+            border: '1px solid #2d3f50',
+            borderRadius: '12px',
+            padding: '40px',
+            maxWidth: '400px',
+            width: '100%',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              backgroundColor: '#5a2d2d',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 24px'
+            }}>
+              <svg style={{ width: '32px', height: '32px', color: '#f87171' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#ffffff', marginBottom: '12px' }}>Access Denied</h1>
-            <p style={{ color: '#8a94a6' }}>{error}</p>
+            <p style={{ color: '#8a94a6', fontSize: '15px' }}>{error}</p>
           </div>
         </div>
       </div>
@@ -368,122 +427,188 @@ export default function ApproverDashboard() {
   const levelLabel = approver?.approval_level === 1 ? 'First' : 'Final';
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0a1628' }}>
-      {/* Header with logo */}
-      <div style={{ padding: '24px', borderBottom: '1px solid #2d3f50' }}>
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <img src={LOGO_URL} alt="InvizArts" style={{ width: '90px', height: 'auto' }} />
-          <div className="text-right">
-            <p style={{ fontSize: '16px', color: '#ffffff', fontWeight: '500' }}>{approver?.name}</p>
-            <p style={{ fontSize: '13px', color: '#8a94a6' }}>{levelLabel} Approver</p>
-          </div>
-        </div>
+    <div className="min-h-screen" style={{ backgroundColor: 'transparent' }}>
+      {/* Fixed Background Image - full viewport */}
+      <div
+        className="hidden lg:block"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          zIndex: 0
+        }}
+      >
+        <img
+          src={BG_IMAGE_URL}
+          alt=""
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center center'
+          }}
+        />
+        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}></div>
       </div>
 
-      <div className="max-w-4xl mx-auto" style={{ padding: '40px 24px' }}>
-        {/* Page Title */}
-        <div style={{ marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '30px', fontWeight: '400', color: '#ffffff', letterSpacing: '0.02em' }}>
-            Approver Dashboard
-          </h1>
-          <p style={{ fontSize: '16px', color: '#8a94a6', marginTop: '12px' }}>
-            Review and approve contractor timecards
-          </p>
+      {/* Fixed Logo */}
+      <img
+        src={LOGO_URL}
+        alt="InvizArts"
+        className="hidden lg:block"
+        style={{
+          position: 'fixed',
+          top: '24px',
+          left: '24px',
+          width: '90px',
+          height: 'auto',
+          zIndex: 50
+        }}
+      />
+
+      {/* Mobile background fallback */}
+      <div className="lg:hidden" style={{ position: 'fixed', inset: 0, backgroundColor: '#0a1628', zIndex: 0 }}></div>
+
+      {/* Centered Content Panel */}
+      <div className="min-h-screen flex flex-col" style={{ position: 'relative', zIndex: 10 }}>
+        {/* Mobile logo */}
+        <div className="lg:hidden pt-6 pl-6">
+          <img src={LOGO_URL} alt="InvizArts" style={{ width: '80px', height: 'auto' }} />
         </div>
 
-        {/* Success Message */}
-        {successMessage && (
-          <div className="flex items-center gap-4" style={{
-            backgroundColor: 'rgba(45, 90, 61, 0.2)',
-            border: '1px solid #2d5a3d',
-            borderRadius: '8px',
-            padding: '16px 20px',
-            marginBottom: '24px'
-          }}>
-            <svg className="w-5 h-5" style={{ color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <p style={{ fontSize: '15px', color: '#4ade80', fontWeight: '500' }}>{successMessage}</p>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {error && approver && (
+        <div className="flex-1 flex justify-center">
           <div style={{
-            backgroundColor: 'rgba(90, 45, 45, 0.2)',
-            border: '1px solid #5a2d2d',
-            borderRadius: '8px',
-            padding: '16px 20px',
-            marginBottom: '24px'
+            backgroundColor: '#0a1628',
+            width: '100%',
+            maxWidth: '900px',
+            minHeight: '100vh',
+            padding: '40px 32px'
           }}>
-            <p style={{ fontSize: '14px', color: '#f87171' }}>{error}</p>
-          </div>
-        )}
-
-        {/* Pending Count */}
-        <div className="card-dark" style={{ padding: '28px', marginBottom: '32px' }}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p style={{ fontSize: '12px', color: '#8a94a6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                Pending Your Approval
-              </p>
-              <p style={{ fontSize: '42px', fontWeight: '300', color: '#ffffff', marginTop: '8px' }}>{invoices.length}</p>
+            {/* Header */}
+            <div className="flex items-center justify-between" style={{ marginBottom: '40px' }}>
+              <div>
+                <h1 style={{ fontSize: '30px', fontWeight: '400', color: '#ffffff', letterSpacing: '0.02em' }}>
+                  Approver Dashboard
+                </h1>
+                <p style={{ fontSize: '16px', color: '#8a94a6', marginTop: '8px' }}>
+                  Review and approve contractor timecards
+                </p>
+              </div>
+              <div className="text-right hidden sm:block">
+                <p style={{ fontSize: '16px', color: '#ffffff', fontWeight: '500' }}>{approver?.name}</p>
+                <p style={{ fontSize: '13px', color: '#8a94a6' }}>{levelLabel} Approver</p>
+              </div>
             </div>
-            <button
-              onClick={loadData}
-              style={{
-                padding: '10px',
-                color: '#8a94a6',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="flex items-center gap-4" style={{
+                backgroundColor: 'rgba(45, 90, 61, 0.2)',
+                border: '1px solid #2d5a3d',
                 borderRadius: '8px',
-                transition: 'color 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#8a94a6'}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
+                padding: '16px 20px',
+                marginBottom: '24px'
+              }}>
+                <svg style={{ width: '20px', height: '20px', color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p style={{ fontSize: '15px', color: '#4ade80', fontWeight: '500' }}>{successMessage}</p>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && approver && (
+              <div style={{
+                backgroundColor: 'rgba(90, 45, 45, 0.2)',
+                border: '1px solid #5a2d2d',
+                borderRadius: '8px',
+                padding: '16px 20px',
+                marginBottom: '24px'
+              }}>
+                <p style={{ fontSize: '14px', color: '#f87171' }}>{error}</p>
+              </div>
+            )}
+
+            {/* Pending Count */}
+            <div style={{
+              backgroundColor: '#0d1b2a',
+              border: '1px solid #2d3f50',
+              borderRadius: '12px',
+              padding: '28px',
+              marginBottom: '32px'
+            }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p style={{ fontSize: '12px', color: '#8a94a6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    Pending Your Approval
+                  </p>
+                  <p style={{ fontSize: '42px', fontWeight: '300', color: '#ffffff', marginTop: '8px' }}>{invoices.length}</p>
+                </div>
+                <button
+                  onClick={loadData}
+                  style={{
+                    padding: '10px',
+                    color: '#8a94a6',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#8a94a6'}
+                >
+                  <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Invoice List */}
+            {invoices.length === 0 ? (
+              <div style={{
+                backgroundColor: '#0d1b2a',
+                border: '1px solid #2d3f50',
+                borderRadius: '12px',
+                padding: '60px 40px',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  width: '80px',
+                  height: '80px',
+                  backgroundColor: '#1b2838',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 24px'
+                }}>
+                  <svg style={{ width: '40px', height: '40px', color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 style={{ fontSize: '22px', fontWeight: '500', color: '#ffffff', marginBottom: '8px' }}>All caught up!</h3>
+                <p style={{ fontSize: '15px', color: '#8a94a6' }}>No timecards pending your approval.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {invoices.map((invoice) => (
+                  <InvoiceCard
+                    key={invoice.id}
+                    invoice={invoice}
+                    approver={approver}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    isProcessing={processingId === invoice.id}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Invoice List */}
-        {invoices.length === 0 ? (
-          <div className="card-dark text-center" style={{ padding: '60px 40px' }}>
-            <div style={{
-              width: '80px',
-              height: '80px',
-              backgroundColor: '#1b2838',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 24px'
-            }}>
-              <svg className="w-10 h-10" style={{ color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 style={{ fontSize: '22px', fontWeight: '500', color: '#ffffff', marginBottom: '8px' }}>All caught up!</h3>
-            <p style={{ fontSize: '15px', color: '#8a94a6' }}>No timecards pending your approval.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {invoices.map((invoice) => (
-              <InvoiceCard
-                key={invoice.id}
-                invoice={invoice}
-                approver={approver}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                isProcessing={processingId === invoice.id}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

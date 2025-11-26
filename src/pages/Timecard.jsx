@@ -54,7 +54,7 @@ export default function Timecard() {
         setInvoiceHistory(history);
       } catch (err) {
         console.error('Error loading data:', err);
-        setError('Failed to load timecard data');
+        setError(err.message || 'Failed to load timecard data');
       } finally {
         setLoading(false);
       }
@@ -148,38 +148,79 @@ export default function Timecard() {
 
   if (error && !contractor) {
     return (
-      <div className="min-h-screen flex" style={{ backgroundColor: '#0a1628' }}>
-        {/* Fixed Logo */}
-        <img
-          src={LOGO_URL}
-          alt="InvizArts"
-          className="fixed top-6 left-6 z-50 hidden lg:block"
-          style={{ width: '90px', height: 'auto' }}
-        />
-
-        {/* Left side - Fixed Background image */}
+      <div className="min-h-screen" style={{ backgroundColor: '#0a1628' }}>
+        {/* Fixed Background Image - covers full viewport */}
         <div
-          className="hidden lg:block fixed left-0 top-0 bottom-0"
-          style={{ width: '30%' }}
+          className="hidden lg:block"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '30%',
+            height: '100vh',
+            zIndex: 0
+          }}
         >
           <img
             src={BG_IMAGE_URL}
             alt=""
-            className="w-full h-full object-cover"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center center'
+            }}
           />
-          <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}></div>
+          <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.2)' }}></div>
         </div>
 
-        {/* Right side - Error */}
-        <div className="flex-1 lg:ml-[30%] flex items-center justify-center p-8">
-          <div className="card-dark p-10 max-w-md w-full text-center">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#5a2d2d' }}>
-              <svg className="w-8 h-8" style={{ color: '#f87171' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+        {/* Fixed Logo - top left corner over image */}
+        <img
+          src={LOGO_URL}
+          alt="InvizArts"
+          className="hidden lg:block"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '24px',
+            width: '90px',
+            height: 'auto',
+            zIndex: 50
+          }}
+        />
+
+        {/* Content Panel */}
+        <div
+          className="min-h-screen lg:ml-[30%]"
+          style={{ backgroundColor: '#0a1628', position: 'relative', zIndex: 10 }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-8">
+            <div style={{
+              backgroundColor: '#0d1b2a',
+              border: '1px solid #2d3f50',
+              borderRadius: '12px',
+              padding: '40px',
+              maxWidth: '400px',
+              width: '100%',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                backgroundColor: '#5a2d2d',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 24px'
+              }}>
+                <svg style={{ width: '32px', height: '32px', color: '#f87171' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#ffffff', marginBottom: '12px' }}>Invalid Link</h1>
+              <p style={{ color: '#8a94a6', fontSize: '15px' }}>{error}</p>
             </div>
-            <h1 className="text-xl font-semibold text-white mb-3">Invalid Link</h1>
-            <p style={{ color: '#8a94a6' }}>{error}</p>
           </div>
         </div>
       </div>
@@ -187,30 +228,52 @@ export default function Timecard() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: '#0a1628' }}>
-      {/* Fixed Logo - top left corner */}
-      <img
-        src={LOGO_URL}
-        alt="InvizArts"
-        className="fixed top-6 left-6 z-50 hidden lg:block"
-        style={{ width: '90px', height: 'auto' }}
-      />
-
-      {/* Left side - Fixed Background image */}
+    <div className="min-h-screen" style={{ backgroundColor: '#0a1628' }}>
+      {/* Fixed Background Image - covers full viewport, visible on left 30% */}
       <div
-        className="hidden lg:block fixed left-0 top-0 bottom-0"
-        style={{ width: '30%' }}
+        className="hidden lg:block"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '30%',
+          height: '100vh',
+          zIndex: 0
+        }}
       >
         <img
           src={BG_IMAGE_URL}
           alt=""
-          className="w-full h-full object-cover"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center center'
+          }}
         />
-        <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}></div>
+        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.2)' }}></div>
       </div>
 
-      {/* Right side - Scrollable Form content */}
-      <div className="flex-1 lg:ml-[30%] min-h-screen overflow-y-auto">
+      {/* Fixed Logo - top left corner over image */}
+      <img
+        src={LOGO_URL}
+        alt="InvizArts"
+        className="hidden lg:block"
+        style={{
+          position: 'fixed',
+          top: '24px',
+          left: '24px',
+          width: '90px',
+          height: 'auto',
+          zIndex: 50
+        }}
+      />
+
+      {/* Content Panel - scrolls over background */}
+      <div
+        className="min-h-screen lg:ml-[30%]"
+        style={{ backgroundColor: '#0a1628', position: 'relative', zIndex: 10 }}
+      >
         {/* Mobile logo */}
         <div className="lg:hidden pt-6 pl-6">
           <img src={LOGO_URL} alt="InvizArts" style={{ width: '80px', height: 'auto' }} />
@@ -239,24 +302,51 @@ export default function Timecard() {
           {/* Invoice Status Badge */}
           <div className="mb-10">
             {invoiceLoading ? (
-              <div className="card-dark p-5 animate-pulse">
-                <div className="h-6 rounded w-32" style={{ backgroundColor: '#1b2838' }}></div>
+              <div style={{
+                backgroundColor: '#0d1b2a',
+                border: '1px solid #2d3f50',
+                borderRadius: '8px',
+                padding: '20px'
+              }}>
+                <div style={{ height: '24px', borderRadius: '4px', width: '128px', backgroundColor: '#1b2838' }}></div>
               </div>
             ) : (
-              <InvoiceStatusBadge status={getInvoiceStatus()} />
+              <InvoiceStatusBadge
+                status={getInvoiceStatus()}
+                rejectionInfo={invoice?.status === 'rejected' ? {
+                  reason: invoice.rejection_reason,
+                  rejectedBy: invoice.rejected_by,
+                  rejectedAt: invoice.rejected_at,
+                } : null}
+              />
             )}
           </div>
 
           {/* Success Message */}
           {submitSuccess && (
-            <div className="rounded-lg p-5 mb-8 flex items-center gap-4" style={{ backgroundColor: 'rgba(45, 90, 61, 0.2)', border: '1px solid #2d5a3d' }}>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#2d5a3d' }}>
-                <svg className="w-5 h-5" style={{ color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-4" style={{
+              backgroundColor: 'rgba(45, 90, 61, 0.2)',
+              border: '1px solid #2d5a3d',
+              borderRadius: '8px',
+              padding: '20px',
+              marginBottom: '32px'
+            }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                backgroundColor: '#2d5a3d',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <svg style={{ width: '20px', height: '20px', color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <div>
-                <p className="font-medium" style={{ color: '#4ade80', fontSize: '15px' }}>
+                <p style={{ color: '#4ade80', fontSize: '15px', fontWeight: '500' }}>
                   Timecard {invoice?.status === 'submitted' ? 'submitted' : 'resubmitted'} successfully!
                 </p>
                 <p style={{ color: 'rgba(74, 222, 128, 0.7)', fontSize: '14px' }}>
@@ -268,33 +358,49 @@ export default function Timecard() {
 
           {/* Error Message */}
           {error && (
-            <div className="rounded-lg p-5 mb-8" style={{ backgroundColor: 'rgba(90, 45, 45, 0.2)', border: '1px solid #5a2d2d' }}>
+            <div style={{
+              backgroundColor: 'rgba(90, 45, 45, 0.2)',
+              border: '1px solid #5a2d2d',
+              borderRadius: '8px',
+              padding: '20px',
+              marginBottom: '32px'
+            }}>
               <p style={{ color: '#f87171', fontSize: '14px' }}>{error}</p>
             </div>
           )}
 
           {/* Tabs */}
-          <div className="flex mb-10" style={{ borderBottom: '1px solid #2d3f50' }}>
+          <div className="flex" style={{ borderBottom: '1px solid #2d3f50', marginBottom: '40px' }}>
             <button
               onClick={() => setActiveTab('form')}
-              className="px-5 py-4 font-medium transition-colors"
               style={{
+                padding: '16px 20px',
                 fontSize: '15px',
+                fontWeight: '500',
                 marginBottom: '-1px',
                 borderBottom: activeTab === 'form' ? '2px solid #ffffff' : '2px solid transparent',
-                color: activeTab === 'form' ? '#ffffff' : '#8a94a6'
+                color: activeTab === 'form' ? '#ffffff' : '#8a94a6',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'color 0.2s'
               }}
             >
               Timecard
             </button>
             <button
               onClick={() => setActiveTab('history')}
-              className="px-5 py-4 font-medium transition-colors"
               style={{
+                padding: '16px 20px',
                 fontSize: '15px',
+                fontWeight: '500',
                 marginBottom: '-1px',
                 borderBottom: activeTab === 'history' ? '2px solid #ffffff' : '2px solid transparent',
-                color: activeTab === 'history' ? '#ffffff' : '#8a94a6'
+                color: activeTab === 'history' ? '#ffffff' : '#8a94a6',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'color 0.2s'
               }}
             >
               History ({invoiceHistory.length})
@@ -304,8 +410,8 @@ export default function Timecard() {
           {activeTab === 'form' ? (
             <div>
               {/* Status Tracker */}
-              {invoice && invoice.status && invoice.status !== 'pending' && invoice.status !== 'not_submitted' && (
-                <div className="mb-10">
+              {invoice && invoice.status && invoice.status !== 'pending' && invoice.status !== 'not_submitted' && invoice.status !== 'rejected' && (
+                <div style={{ marginBottom: '40px' }}>
                   <StatusTracker
                     status={invoice.status}
                     timestamps={{
@@ -314,11 +420,6 @@ export default function Timecard() {
                       approval_2: invoice.approval_2_at,
                       pending_payment: invoice.approval_2_at,
                       paid: invoice.paid_at,
-                    }}
-                    rejectionInfo={{
-                      reason: invoice.rejection_reason,
-                      rejectedBy: invoice.rejected_by,
-                      rejectedAt: invoice.rejected_at,
                     }}
                   />
                 </div>
