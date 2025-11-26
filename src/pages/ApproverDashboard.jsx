@@ -630,14 +630,10 @@ export default function ApproverDashboard() {
           src={BG_IMAGE_URL}
           alt=""
           style={{
-            width: '2560px',
-            height: '3200px',
+            width: '100%',
+            height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center top',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
+            objectPosition: 'center top'
           }}
         />
         <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}></div>
