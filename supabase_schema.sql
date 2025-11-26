@@ -23,6 +23,21 @@ CREATE TABLE contractors (
 CREATE INDEX idx_contractors_url_token ON contractors(url_token);
 CREATE INDEX idx_contractors_is_active ON contractors(is_active);
 
+-- Admin users / Approvers table
+CREATE TABLE admin_users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  url_token TEXT UNIQUE NOT NULL,
+  approval_level INTEGER NOT NULL CHECK (approval_level IN (1, 2)),
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_admin_users_url_token ON admin_users(url_token);
+CREATE INDEX idx_admin_users_approval_level ON admin_users(approval_level);
+
 -- Invoices table
 CREATE TABLE invoices (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -54,7 +69,7 @@ CREATE TABLE invoices (
   total_amount DECIMAL(12, 2) NOT NULL DEFAULT 0,
 
   -- Status tracking
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'submitted', 'approval_1', 'approval_2', 'pending_payment', 'paid')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'submitted', 'approval_1', 'approval_2', 'pending_payment', 'paid', 'rejected')),
 
   -- Timestamps for status changes
   submitted_at TIMESTAMPTZ,
@@ -63,6 +78,11 @@ CREATE TABLE invoices (
   approval_2_at TIMESTAMPTZ,
   approval_2_by TEXT,
   paid_at TIMESTAMPTZ,
+
+  -- Rejection tracking
+  rejection_reason TEXT,
+  rejected_by TEXT,
+  rejected_at TIMESTAMPTZ,
 
   -- Audit timestamps
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -98,10 +118,16 @@ CREATE TRIGGER update_invoices_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_admin_users_updated_at
+  BEFORE UPDATE ON admin_users
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
 -- Row Level Security (RLS) Policies
 -- Enable RLS on tables
 ALTER TABLE contractors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow public read access to contractors by url_token
 CREATE POLICY "Allow public read contractors by token"
@@ -122,13 +148,55 @@ CREATE POLICY "Allow public update invoices"
   ON invoices FOR UPDATE
   USING (true);
 
+-- Policy: Allow public read admin_users
+CREATE POLICY "Allow public read admin_users"
+  ON admin_users FOR SELECT
+  USING (true);
+
 -- Initial contractor data
 INSERT INTO contractors (name, email, company, address, phone, default_hourly_rate, url_token) VALUES
   ('Dave Lopez', 'dave@veexphoto.com', 'Veex Photo LLC', '1631 Kapiolani Blvd. #806 Honolulu, HI 96814', '808-232-6959', 75.00, 'veex-dave');
 
+-- Sample approvers (customize these for your organization)
+INSERT INTO admin_users (name, email, url_token, approval_level) VALUES
+  ('First Approver', 'approver1@company.com', 'approver1-abc123', 1),
+  ('Second Approver', 'approver2@company.com', 'approver2-xyz789', 2);
+
 -- ===========================================
--- MIGRATION: Add tax columns to existing database
--- Run this if you already have the invoices table
+-- MIGRATION: Run these on existing database
 -- ===========================================
--- ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_rate DECIMAL(10, 5);
--- ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(12, 2);
+/*
+-- Create admin_users table
+CREATE TABLE IF NOT EXISTS admin_users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  url_token TEXT UNIQUE NOT NULL,
+  approval_level INTEGER NOT NULL CHECK (approval_level IN (1, 2)),
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_users_url_token ON admin_users(url_token);
+CREATE INDEX IF NOT EXISTS idx_admin_users_approval_level ON admin_users(approval_level);
+
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read admin_users" ON admin_users FOR SELECT USING (true);
+
+-- Add rejection columns to invoices
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS rejected_by TEXT;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS rejected_at TIMESTAMPTZ;
+
+-- Update status constraint to include 'rejected'
+ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_status_check;
+ALTER TABLE invoices ADD CONSTRAINT invoices_status_check
+  CHECK (status IN ('pending', 'submitted', 'approval_1', 'approval_2', 'pending_payment', 'paid', 'rejected'));
+
+-- Insert sample approvers
+INSERT INTO admin_users (name, email, url_token, approval_level) VALUES
+  ('First Approver', 'approver1@company.com', 'approver1-abc123', 1),
+  ('Second Approver', 'approver2@company.com', 'approver2-xyz789', 2);
+*/

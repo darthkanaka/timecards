@@ -9,6 +9,7 @@ export default function TimecardForm({
   onSubmit,
   isSubmitting = false,
   readOnly = false,
+  isResubmission = false,
 }) {
   const [formData, setFormData] = useState({
     week1Hours: 0,
@@ -184,10 +185,12 @@ export default function TimecardForm({
           className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${
             isSubmitting || subtotal === 0
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
+              : isResubmission
+                ? 'bg-orange-600 hover:bg-orange-700'
+                : 'bg-blue-600 hover:bg-blue-700'
           }`}
         >
-          {isSubmitting ? 'Submitting...' : 'Submit Timecard'}
+          {isSubmitting ? 'Submitting...' : isResubmission ? 'Resubmit Timecard' : 'Submit Timecard'}
         </button>
       )}
 

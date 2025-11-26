@@ -48,6 +48,13 @@ const STATUS_CONFIG = {
     textColor: 'text-green-700',
     borderColor: 'border-green-200',
   },
+  rejected: {
+    label: 'Rejected',
+    description: 'Timecard was rejected - please review and resubmit',
+    bgColor: 'bg-red-50',
+    textColor: 'text-red-700',
+    borderColor: 'border-red-200',
+  },
 };
 
 export default function InvoiceStatusBadge({ status, showDescription = true }) {
