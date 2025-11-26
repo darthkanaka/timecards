@@ -11,7 +11,7 @@ import ContractorStatusPanel from '../components/ContractorStatusPanel';
 import SendReminderModal from '../components/SendReminderModal';
 
 const LOGO_URL = "https://static.wixstatic.com/media/edda46_11cebb29dd364966929fec216683b3f3~mv2.png/v1/fill/w_486,h_344,al_c,lg_1,q_85,enc_avif,quality_auto/IA%20LOGO.png";
-const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/e40c7e87-957a-4182-a7f7-89556b540617/TimecardBG.jpg?content-type=image%2Fjpeg";
+const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/175a8bbd-61af-4377-8b41-d082d2321fb5/TimecardBH2.jpg?content-type=image%2Fjpeg";
 
 function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
   const [showRejectForm, setShowRejectForm] = useState(false);
@@ -552,14 +552,10 @@ export default function ApproverDashboard() {
             src={BG_IMAGE_URL}
             alt=""
             style={{
-              width: '2560px',
-              height: '3200px',
+              width: '100%',
+              height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center top',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)'
+              objectPosition: 'center top'
             }}
           />
           <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}></div>
