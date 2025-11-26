@@ -86,8 +86,9 @@ export async function submitTimecard(contractorId, timecardData, payPeriod) {
     week_2_hours: timecardData.week2Hours,
     week_2_rate: timecardData.week2Rate,
     week_2_notes: timecardData.week2Notes,
-    total_amount: (timecardData.week1Hours * timecardData.week1Rate) +
-                  (timecardData.week2Hours * timecardData.week2Rate),
+    tax_rate: timecardData.taxRate || null,
+    tax_amount: timecardData.taxAmount || null,
+    total_amount: timecardData.totalAmount,
     status: 'submitted',
     submitted_at: new Date().toISOString(),
   };
