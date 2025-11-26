@@ -389,6 +389,7 @@ export async function getPayPeriodSummary(payPeriodStart) {
   const notSubmitted = contractors?.filter(c => !submittedIds.has(c.id)) || [];
 
   const totalAmount = invoices?.reduce((sum, inv) => sum + (inv.total_amount || 0), 0) || 0;
+  const totalExpenses = invoices?.reduce((sum, inv) => sum + (inv.expenses_total || 0), 0) || 0;
 
   return {
     invoices: invoices || [],
@@ -396,6 +397,7 @@ export async function getPayPeriodSummary(payPeriodStart) {
     submittedCount: invoices?.length || 0,
     notSubmitted,
     totalAmount,
+    totalExpenses,
     allSubmitted: notSubmitted.length === 0 && (contractors?.length || 0) > 0,
   };
 }

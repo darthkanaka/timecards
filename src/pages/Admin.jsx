@@ -198,7 +198,7 @@ export default function Admin() {
             )}
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4" style={{ marginBottom: '40px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4" style={{ marginBottom: '40px' }}>
               <div style={{
                 backgroundColor: '#0d1b2a',
                 border: '1px solid #2d3f50',
@@ -260,6 +260,26 @@ export default function Admin() {
                 </p>
                 <p style={{ fontSize: '32px', fontWeight: '300', color: '#34d399' }}>
                   ${(summary?.totalAmount || 0).toFixed(2)}
+                </p>
+              </div>
+              <div style={{
+                backgroundColor: '#0d1b2a',
+                border: '1px solid #2d3f50',
+                borderRadius: '8px',
+                padding: '20px'
+              }}>
+                <p style={{
+                  fontSize: '11px',
+                  fontWeight: '500',
+                  color: '#8a94a6',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  marginBottom: '12px'
+                }}>
+                  Expenses
+                </p>
+                <p style={{ fontSize: '32px', fontWeight: '300', color: '#fbbf24' }}>
+                  ${(summary?.totalExpenses || 0).toFixed(2)}
                 </p>
               </div>
               <div style={{
