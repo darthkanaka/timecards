@@ -297,7 +297,7 @@ export async function advanceInvoiceStatus(invoiceId, approverName = 'Admin') {
 
   if (error) {
     console.error('Error advancing invoice:', error);
-    throw new Error('Failed to advance invoice status');
+    throw new Error(error.message || 'Failed to advance invoice status');
   }
 
   // Trigger n8n webhook for status change notification
@@ -460,7 +460,7 @@ export async function approveInvoice(invoiceId, approverName, approvalLevel) {
 
   if (error) {
     console.error('Error approving invoice:', error);
-    throw new Error('Failed to approve invoice');
+    throw new Error(error.message || 'Failed to approve invoice');
   }
 
   // Trigger n8n webhook for approval notification
@@ -518,7 +518,7 @@ export async function rejectInvoice(invoiceId, approverName, rejectionReason) {
 
   if (error) {
     console.error('Error rejecting invoice:', error);
-    throw new Error('Failed to reject invoice');
+    throw new Error(error.message || 'Failed to reject invoice');
   }
 
   // Trigger n8n webhook for rejection notification
