@@ -46,7 +46,11 @@ CREATE TABLE invoices (
   week_2_rate DECIMAL(10, 2) NOT NULL DEFAULT 0,
   week_2_notes TEXT,
 
-  -- Calculated total
+  -- Tax (optional)
+  tax_rate DECIMAL(10, 5),
+  tax_amount DECIMAL(12, 2),
+
+  -- Calculated total (includes tax if applicable)
   total_amount DECIMAL(12, 2) NOT NULL DEFAULT 0,
 
   -- Status tracking
@@ -121,3 +125,10 @@ CREATE POLICY "Allow public update invoices"
 -- Initial contractor data
 INSERT INTO contractors (name, email, company, address, phone, default_hourly_rate, url_token) VALUES
   ('Dave Lopez', 'dave@veexphoto.com', 'Veex Photo LLC', '1631 Kapiolani Blvd. #806 Honolulu, HI 96814', '808-232-6959', 75.00, 'veex-dave');
+
+-- ===========================================
+-- MIGRATION: Add tax columns to existing database
+-- Run this if you already have the invoices table
+-- ===========================================
+-- ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_rate DECIMAL(10, 5);
+-- ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(12, 2);
