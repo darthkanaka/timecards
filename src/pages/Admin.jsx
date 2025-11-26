@@ -6,6 +6,7 @@ import {
   getAllInvoices,
   advanceInvoiceStatus,
   getPayPeriodSummary,
+  deleteInvoice,
 } from '../lib/api';
 import { getCurrentPayPeriod, toISODateString, getPayPeriodLabel } from '../lib/payPeriod';
 
@@ -16,6 +17,7 @@ const STATUS_OPTIONS = [
   { value: 'approval_2', label: 'Second Approval' },
   { value: 'pending_payment', label: 'Payment Processing' },
   { value: 'paid', label: 'Paid' },
+  { value: 'rejected', label: 'Rejected' },
 ];
 
 export default function Admin() {
@@ -65,6 +67,23 @@ export default function Admin() {
     } catch (err) {
       console.error('Error advancing status:', err);
       setError(err.message || 'Failed to advance status');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteInvoice = async (invoiceId) => {
+    if (!window.confirm('Are you sure you want to delete this timecard? This will allow the contractor to submit a fresh timecard for this period.')) {
+      return;
+    }
+    try {
+      setActionLoading(true);
+      await deleteInvoice(invoiceId);
+      setSelectedInvoice(null);
+      await loadData();
+    } catch (err) {
+      console.error('Error deleting invoice:', err);
+      setError(err.message || 'Failed to delete invoice');
     } finally {
       setActionLoading(false);
     }
@@ -262,6 +281,19 @@ export default function Admin() {
                     </p>
                   </div>
                 )}
+                {/* Delete Button */}
+                <div className="pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => handleDeleteInvoice(selectedInvoice.id)}
+                    disabled={actionLoading}
+                    className="w-full py-2 px-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {actionLoading ? 'Deleting...' : 'Delete Timecard'}
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    This will completely remove the timecard and allow the contractor to submit fresh.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
