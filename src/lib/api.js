@@ -92,6 +92,8 @@ export async function submitTimecard(contractorId, timecardData, payPeriod, isRe
     week_2_notes: timecardData.week2Notes,
     tax_rate: timecardData.taxRate || null,
     tax_amount: timecardData.taxAmount || null,
+    expenses: timecardData.expenses?.length > 0 ? JSON.stringify(timecardData.expenses) : null,
+    expenses_total: timecardData.expensesTotal || null,
     total_amount: timecardData.totalAmount,
     status: 'submitted',
     submitted_at: new Date().toISOString(),
@@ -172,6 +174,9 @@ export async function submitTimecard(contractorId, timecardData, payPeriod, isRe
           week2Hours: result.week_2_hours,
           week2Rate: result.week_2_rate,
           week2Notes: result.week_2_notes,
+          // Expense reimbursements
+          expenses: result.expenses ? JSON.parse(result.expenses) : [],
+          expensesTotal: result.expenses_total || 0,
           totalAmount: result.total_amount,
         }),
       });
