@@ -174,8 +174,8 @@ export default function TimecardForm({
               value={formData.taxRate}
               onChange={(e) => setFormData({ ...formData, taxRate: e.target.value })}
               disabled={readOnly}
-              className="input-underline"
-              style={{ width: '140px', height: '42px', fontSize: '16px' }}
+              className="input-filled"
+              style={{ width: '160px' }}
               placeholder="0.04712"
             />
             <span style={{ fontSize: '12px', color: '#5a6478' }}>e.g., 0.04712 for Hawaii GET</span>
