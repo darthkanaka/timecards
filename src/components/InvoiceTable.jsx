@@ -2,9 +2,9 @@ import { formatDateRange } from '../lib/payPeriod';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pending', bgColor: 'rgba(251, 191, 36, 0.2)', textColor: '#fbbf24', nextAction: null },
-  submitted: { label: 'Submitted', bgColor: 'rgba(96, 165, 250, 0.2)', textColor: '#60a5fa', nextAction: 'Approve (1st)' },
-  approval_1: { label: '1st Approved', bgColor: 'rgba(168, 85, 247, 0.2)', textColor: '#a855f7', nextAction: 'Approve (2nd)' },
-  approval_2: { label: '2nd Approved', bgColor: 'rgba(99, 102, 241, 0.2)', textColor: '#818cf8', nextAction: 'Mark Processing' },
+  submitted: { label: 'Submitted', bgColor: 'rgba(96, 165, 250, 0.2)', textColor: '#60a5fa', nextAction: 'Nick (1/2)' },
+  approval_1: { label: 'Nick (1/2)', bgColor: 'rgba(168, 85, 247, 0.2)', textColor: '#a855f7', nextAction: 'Chris (2/2)' },
+  approval_2: { label: 'Chris (2/2)', bgColor: 'rgba(99, 102, 241, 0.2)', textColor: '#818cf8', nextAction: 'Mark Processing' },
   pending_payment: { label: 'Processing', bgColor: 'rgba(251, 191, 36, 0.2)', textColor: '#fbbf24', nextAction: 'Mark Paid' },
   paid: { label: 'Paid', bgColor: 'rgba(52, 211, 153, 0.2)', textColor: '#34d399', nextAction: null },
   rejected: { label: 'Rejected', bgColor: 'rgba(239, 68, 68, 0.2)', textColor: '#f87171', nextAction: null },
