@@ -161,6 +161,23 @@ export async function submitTimecard(contractorId, timecardData, payPeriod, isRe
 // ==================== Admin API Functions ====================
 
 /**
+ * Delete an invoice completely (resets to fresh state for contractor)
+ */
+export async function deleteInvoice(invoiceId) {
+  const { error } = await supabase
+    .from('invoices')
+    .delete()
+    .eq('id', invoiceId);
+
+  if (error) {
+    console.error('Error deleting invoice:', error);
+    throw new Error('Failed to delete invoice');
+  }
+
+  return true;
+}
+
+/**
  * Get all contractors
  */
 export async function getAllContractors() {
