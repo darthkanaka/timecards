@@ -82,6 +82,7 @@ export default function InvoiceTable({
               <th style={headerStyle}>Pay Period</th>
               <th style={headerStyle}>Hours</th>
               <th style={headerStyle}>Amount</th>
+              <th style={headerStyle}>Exp</th>
               <th style={headerStyle}>Status</th>
               <th style={{ ...headerStyle, textAlign: 'right' }}>Actions</th>
             </tr>
@@ -125,6 +126,16 @@ export default function InvoiceTable({
                     <span style={{ fontSize: '14px', fontWeight: '500', color: '#ffffff' }}>
                       ${(invoice.total_amount || 0).toFixed(2)}
                     </span>
+                  </td>
+                  <td style={cellStyle}>
+                    {(() => {
+                      const expenses = invoice.expenses ? (typeof invoice.expenses === 'string' ? JSON.parse(invoice.expenses) : invoice.expenses) : [];
+                      return expenses.length > 0 ? (
+                        <span style={{ fontSize: '14px', color: '#fbbf24' }}>{expenses.length}</span>
+                      ) : (
+                        <span style={{ fontSize: '14px', color: '#5a6478' }}>—</span>
+                      );
+                    })()}
                   </td>
                   <td style={cellStyle}>
                     <span style={{
