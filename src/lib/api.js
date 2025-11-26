@@ -145,13 +145,34 @@ export async function submitTimecard(contractorId, timecardData, payPeriod, isRe
   // Trigger n8n webhook for notifications
   if (N8N_WEBHOOK_URL) {
     try {
+      // Fetch contractor details for the webhook
+      const { data: contractor } = await supabase
+        .from('contractors')
+        .select('*')
+        .eq('id', contractorId)
+        .single();
+
       await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           event: 'invoice_submitted',
           invoice: result,
-          contractorId,
+          contractor: contractor || null,
+          contractorName: contractor?.name,
+          contractorEmail: contractor?.email,
+          contractorCompany: contractor?.company,
+          isResubmission,
+          // Flattened fields for easy email template access
+          payPeriodStart: result.pay_period_start,
+          payPeriodEnd: result.pay_period_end,
+          week1Hours: result.week_1_hours,
+          week1Rate: result.week_1_rate,
+          week1Notes: result.week_1_notes,
+          week2Hours: result.week_2_hours,
+          week2Rate: result.week_2_rate,
+          week2Notes: result.week_2_notes,
+          totalAmount: result.total_amount,
         }),
       });
     } catch (webhookError) {
@@ -485,10 +506,25 @@ export async function approveInvoice(invoiceId, approverName, approvalLevel) {
           invoice: data,
           approverName,
           approvalLevel,
+          approvalLabel: approvalLevel === 1 ? 'Nick (1/2)' : 'Chris (2/2)',
           previousStatus: invoice.status,
           newStatus,
+          // Contractor details
+          contractor: invoice.contractors || null,
+          contractorName: invoice.contractors?.name,
           contractorEmail: invoice.contractors?.email,
+          contractorCompany: invoice.contractors?.company,
           contractorTimecardUrl: invoice.contractors?.url_token,
+          // Invoice details for easy template access
+          payPeriodStart: invoice.pay_period_start,
+          payPeriodEnd: invoice.pay_period_end,
+          week1Hours: invoice.week_1_hours,
+          week1Rate: invoice.week_1_rate,
+          week1Notes: invoice.week_1_notes,
+          week2Hours: invoice.week_2_hours,
+          week2Rate: invoice.week_2_rate,
+          week2Notes: invoice.week_2_notes,
+          totalAmount: invoice.total_amount,
         }),
       });
     } catch (webhookError) {
@@ -544,8 +580,22 @@ export async function rejectInvoice(invoiceId, approverName, rejectionReason) {
           approverName,
           rejectionReason,
           previousStatus: invoice.status,
+          // Contractor details
+          contractor: invoice.contractors || null,
+          contractorName: invoice.contractors?.name,
           contractorEmail: invoice.contractors?.email,
+          contractorCompany: invoice.contractors?.company,
           contractorTimecardUrl: invoice.contractors?.url_token,
+          // Invoice details for easy template access
+          payPeriodStart: invoice.pay_period_start,
+          payPeriodEnd: invoice.pay_period_end,
+          week1Hours: invoice.week_1_hours,
+          week1Rate: invoice.week_1_rate,
+          week1Notes: invoice.week_1_notes,
+          week2Hours: invoice.week_2_hours,
+          week2Rate: invoice.week_2_rate,
+          week2Notes: invoice.week_2_notes,
+          totalAmount: invoice.total_amount,
         }),
       });
     } catch (webhookError) {
