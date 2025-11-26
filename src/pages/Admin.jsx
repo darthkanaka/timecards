@@ -49,12 +49,12 @@ export default function Admin() {
   const isCurrentPayPeriod = isCurrentPeriod(payPeriod);
 
   const handlePreviousPeriod = () => {
-    setPayPeriod(getPreviousPayPeriod(payPeriod.periodStart));
+    setPayPeriod(getPreviousPayPeriod(payPeriod));
   };
 
   const handleNextPeriod = () => {
     if (!isCurrentPayPeriod) {
-      setPayPeriod(getNextPayPeriod(payPeriod.periodStart));
+      setPayPeriod(getNextPayPeriod(payPeriod));
     }
   };
 
