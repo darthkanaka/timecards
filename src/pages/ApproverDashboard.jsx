@@ -31,21 +31,21 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
   return (
     <div className="card-dark overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-dark-border">
+      <div style={{ padding: '20px 24px', borderBottom: '1px solid #2d3f50' }}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-white font-semibold">
+            <h3 style={{ fontSize: '18px', color: '#ffffff', fontWeight: '600' }}>
               {invoice.contractors?.name}
             </h3>
             {invoice.contractors?.company && (
-              <p className="text-text-secondary text-sm">{invoice.contractors.company}</p>
+              <p style={{ fontSize: '14px', color: '#8a94a6', marginTop: '4px' }}>{invoice.contractors.company}</p>
             )}
           </div>
           <div className="text-right">
-            <p className="text-white text-sm font-medium">
+            <p style={{ fontSize: '15px', color: '#ffffff', fontWeight: '500' }}>
               {formatDateRange(periodStart, periodEnd)}
             </p>
-            <p className="text-text-muted text-xs">
+            <p style={{ fontSize: '12px', color: '#5a6478', marginTop: '4px' }}>
               Submitted {new Date(invoice.submitted_at).toLocaleDateString()}
             </p>
           </div>
@@ -53,70 +53,70 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
       </div>
 
       {/* Invoice Details */}
-      <div className="p-6 space-y-4">
+      <div style={{ padding: '24px' }}>
         {/* Week 1 */}
-        <div className="bg-dark-elevated rounded-lg p-4">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-text-secondary text-sm font-medium">Week 1</span>
-            <span className="text-white font-semibold">
+        <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+          <div className="flex justify-between items-start" style={{ marginBottom: '8px' }}>
+            <span style={{ fontSize: '14px', color: '#8a94a6', fontWeight: '500' }}>Week 1</span>
+            <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>
               ${week1Subtotal.toFixed(2)}
             </span>
           </div>
-          <div className="text-text-muted text-sm">
+          <div style={{ fontSize: '13px', color: '#5a6478' }}>
             <span>{invoice.week_1_hours || 0} hours × ${invoice.week_1_rate || 0}/hr</span>
           </div>
           {invoice.week_1_notes && (
-            <p className="mt-2 text-text-secondary text-sm italic">
+            <p style={{ marginTop: '10px', fontSize: '13px', color: '#8a94a6', fontStyle: 'italic' }}>
               "{invoice.week_1_notes}"
             </p>
           )}
         </div>
 
         {/* Week 2 */}
-        <div className="bg-dark-elevated rounded-lg p-4">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-text-secondary text-sm font-medium">Week 2</span>
-            <span className="text-white font-semibold">
+        <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+          <div className="flex justify-between items-start" style={{ marginBottom: '8px' }}>
+            <span style={{ fontSize: '14px', color: '#8a94a6', fontWeight: '500' }}>Week 2</span>
+            <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>
               ${week2Subtotal.toFixed(2)}
             </span>
           </div>
-          <div className="text-text-muted text-sm">
+          <div style={{ fontSize: '13px', color: '#5a6478' }}>
             <span>{invoice.week_2_hours || 0} hours × ${invoice.week_2_rate || 0}/hr</span>
           </div>
           {invoice.week_2_notes && (
-            <p className="mt-2 text-text-secondary text-sm italic">
+            <p style={{ marginTop: '10px', fontSize: '13px', color: '#8a94a6', fontStyle: 'italic' }}>
               "{invoice.week_2_notes}"
             </p>
           )}
         </div>
 
         {/* Totals */}
-        <div className="border-t border-dark-border pt-4 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-text-secondary">Subtotal</span>
-            <span className="text-white font-medium">${subtotal.toFixed(2)}</span>
+        <div style={{ borderTop: '1px solid #2d3f50', paddingTop: '16px' }}>
+          <div className="flex justify-between" style={{ marginBottom: '10px' }}>
+            <span style={{ fontSize: '14px', color: '#8a94a6' }}>Subtotal</span>
+            <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500' }}>${subtotal.toFixed(2)}</span>
           </div>
           {invoice.tax_rate && (
-            <div className="flex justify-between text-sm">
-              <span className="text-text-secondary">
+            <div className="flex justify-between" style={{ marginBottom: '10px' }}>
+              <span style={{ fontSize: '14px', color: '#8a94a6' }}>
                 Tax ({(invoice.tax_rate * 100).toFixed(3)}%)
               </span>
-              <span className="text-white font-medium">${(invoice.tax_amount || 0).toFixed(2)}</span>
+              <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500' }}>${(invoice.tax_amount || 0).toFixed(2)}</span>
             </div>
           )}
-          <div className="flex justify-between pt-2">
-            <span className="text-white font-semibold">Total</span>
-            <span className="text-status-success-text text-lg font-bold">${(invoice.total_amount || 0).toFixed(2)}</span>
+          <div className="flex justify-between items-center" style={{ paddingTop: '12px' }}>
+            <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>Total</span>
+            <span style={{ fontSize: '22px', fontWeight: '700', color: '#4ade80' }}>${(invoice.total_amount || 0).toFixed(2)}</span>
           </div>
         </div>
 
         {/* First Approval Info (for Level 2 approvers) */}
         {approver.approval_level === 2 && invoice.approval_1_by && (
-          <div className="bg-status-info/20 rounded-lg p-4 text-sm">
-            <p className="text-status-info-text">
-              <span className="font-medium">First Approval:</span> {invoice.approval_1_by}
+          <div style={{ backgroundColor: 'rgba(45, 74, 90, 0.3)', borderRadius: '8px', padding: '16px', marginTop: '20px' }}>
+            <p style={{ fontSize: '14px', color: '#60a5fa' }}>
+              <span style={{ fontWeight: '500' }}>First Approval:</span> {invoice.approval_1_by}
             </p>
-            <p className="text-status-info-text/70 text-xs">
+            <p style={{ fontSize: '12px', color: 'rgba(96, 165, 250, 0.7)', marginTop: '4px' }}>
               {new Date(invoice.approval_1_at).toLocaleString()}
             </p>
           </div>
@@ -124,41 +124,76 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
       </div>
 
       {/* Actions */}
-      <div className="px-6 py-4 border-t border-dark-border">
+      <div style={{ padding: '20px 24px', borderTop: '1px solid #2d3f50' }}>
         {!showRejectForm ? (
           <div className="flex gap-3">
             <button
               onClick={() => onApprove(invoice.id)}
               disabled={isProcessing}
-              className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-                isProcessing
-                  ? 'bg-accent/50 text-text-muted cursor-not-allowed'
-                  : 'bg-status-success text-status-success-text hover:bg-status-success/80'
-              }`}
+              style={{
+                flex: 1,
+                padding: '14px 20px',
+                borderRadius: '8px',
+                fontWeight: '500',
+                fontSize: '15px',
+                border: 'none',
+                cursor: isProcessing ? 'not-allowed' : 'pointer',
+                backgroundColor: isProcessing ? 'rgba(61, 79, 95, 0.5)' : '#2d5a3d',
+                color: isProcessing ? '#5a6478' : '#4ade80',
+                transition: 'background-color 0.2s'
+              }}
             >
               {isProcessing ? 'Processing...' : 'Approve'}
             </button>
             <button
               onClick={() => setShowRejectForm(true)}
               disabled={isProcessing}
-              className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-                isProcessing
-                  ? 'bg-dark-elevated text-text-muted cursor-not-allowed'
-                  : 'bg-dark-elevated text-status-error-text hover:bg-status-error/20 border border-status-error/50'
-              }`}
+              style={{
+                flex: 1,
+                padding: '14px 20px',
+                borderRadius: '8px',
+                fontWeight: '500',
+                fontSize: '15px',
+                cursor: isProcessing ? 'not-allowed' : 'pointer',
+                backgroundColor: isProcessing ? '#1b2838' : '#1b2838',
+                color: isProcessing ? '#5a6478' : '#f87171',
+                border: '1px solid rgba(248, 113, 113, 0.5)',
+                transition: 'background-color 0.2s'
+              }}
             >
               Reject
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div>
-              <label className="label-dark">Rejection Reason (required)</label>
+          <div>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '11px',
+                fontWeight: '500',
+                color: '#8a94a6',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                marginBottom: '10px'
+              }}>
+                Rejection Reason (required)
+              </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="w-full bg-dark-elevated border border-dark-border rounded-lg px-4 py-3 text-white text-sm placeholder-text-muted focus:outline-none focus:border-status-error-text/50"
+                style={{
+                  width: '100%',
+                  backgroundColor: '#1b2838',
+                  border: '1px solid #2d3f50',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  outline: 'none',
+                  resize: 'none',
+                  fontFamily: 'inherit'
+                }}
                 placeholder="Please explain why this timecard is being rejected..."
               />
             </div>
@@ -166,11 +201,18 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
               <button
                 onClick={handleRejectSubmit}
                 disabled={!rejectionReason.trim() || isProcessing}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-                  !rejectionReason.trim() || isProcessing
-                    ? 'bg-accent/50 text-text-muted cursor-not-allowed'
-                    : 'bg-status-error text-status-error-text hover:bg-status-error/80'
-                }`}
+                style={{
+                  flex: 1,
+                  padding: '14px 20px',
+                  borderRadius: '8px',
+                  fontWeight: '500',
+                  fontSize: '15px',
+                  border: 'none',
+                  cursor: (!rejectionReason.trim() || isProcessing) ? 'not-allowed' : 'pointer',
+                  backgroundColor: (!rejectionReason.trim() || isProcessing) ? 'rgba(61, 79, 95, 0.5)' : '#5a2d2d',
+                  color: (!rejectionReason.trim() || isProcessing) ? '#5a6478' : '#f87171',
+                  transition: 'background-color 0.2s'
+                }}
               >
                 Confirm Rejection
               </button>
@@ -179,7 +221,14 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
                   setShowRejectForm(false);
                   setRejectionReason('');
                 }}
-                className="px-4 py-3 text-text-secondary hover:text-white transition-colors"
+                style={{
+                  padding: '14px 20px',
+                  color: '#8a94a6',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '15px'
+                }}
               >
                 Cancel
               </button>
@@ -283,10 +332,10 @@ export default function ApproverDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0a1628' }}>
         <div className="text-center">
-          <div className="w-10 h-10 border-2 border-text-secondary border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-text-secondary">Loading dashboard...</p>
+          <div className="w-10 h-10 border-2 border-gray-500 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p style={{ color: '#8a94a6' }}>Loading dashboard...</p>
         </div>
       </div>
     );
@@ -294,21 +343,21 @@ export default function ApproverDashboard() {
 
   if (error && !approver) {
     return (
-      <div className="min-h-screen bg-dark-bg flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#0a1628' }}>
         {/* Header with logo */}
-        <div className="p-6">
-          <img src={LOGO_URL} alt="InvizArts" className="h-12 w-auto" />
+        <div style={{ padding: '24px' }}>
+          <img src={LOGO_URL} alt="InvizArts" style={{ width: '90px', height: 'auto' }} />
         </div>
 
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="card-dark p-8 max-w-md w-full text-center">
-            <div className="w-16 h-16 bg-status-error rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-status-error-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="card-dark p-10 max-w-md w-full text-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#5a2d2d' }}>
+              <svg className="w-8 h-8" style={{ color: '#f87171' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h1 className="text-xl font-semibold text-white mb-3">Access Denied</h1>
-            <p className="text-text-secondary">{error}</p>
+            <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#ffffff', marginBottom: '12px' }}>Access Denied</h1>
+            <p style={{ color: '#8a94a6' }}>{error}</p>
           </div>
         </div>
       </div>
@@ -318,58 +367,82 @@ export default function ApproverDashboard() {
   const levelLabel = approver?.approval_level === 1 ? 'First' : 'Final';
 
   return (
-    <div className="min-h-screen bg-dark-bg">
+    <div className="min-h-screen" style={{ backgroundColor: '#0a1628' }}>
       {/* Header with logo */}
-      <div className="p-6 border-b border-dark-border">
+      <div style={{ padding: '24px', borderBottom: '1px solid #2d3f50' }}>
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <img src={LOGO_URL} alt="InvizArts" className="h-10 w-auto" />
+          <img src={LOGO_URL} alt="InvizArts" style={{ width: '90px', height: 'auto' }} />
           <div className="text-right">
-            <p className="text-white font-medium">{approver?.name}</p>
-            <p className="text-text-secondary text-sm">{levelLabel} Approver</p>
+            <p style={{ fontSize: '16px', color: '#ffffff', fontWeight: '500' }}>{approver?.name}</p>
+            <p style={{ fontSize: '13px', color: '#8a94a6' }}>{levelLabel} Approver</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto" style={{ padding: '40px 24px' }}>
         {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-light text-white tracking-wide">
+        <div style={{ marginBottom: '40px' }}>
+          <h1 style={{ fontSize: '30px', fontWeight: '400', color: '#ffffff', letterSpacing: '0.02em' }}>
             Approver Dashboard
           </h1>
-          <p className="text-text-secondary mt-2">
+          <p style={{ fontSize: '16px', color: '#8a94a6', marginTop: '12px' }}>
             Review and approve contractor timecards
           </p>
         </div>
 
         {/* Success Message */}
         {successMessage && (
-          <div className="bg-status-success/20 border border-status-success rounded-lg p-4 mb-6 flex items-center gap-3">
-            <svg className="w-5 h-5 text-status-success-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-4" style={{
+            backgroundColor: 'rgba(45, 90, 61, 0.2)',
+            border: '1px solid #2d5a3d',
+            borderRadius: '8px',
+            padding: '16px 20px',
+            marginBottom: '24px'
+          }}>
+            <svg className="w-5 h-5" style={{ color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <p className="text-status-success-text font-medium">{successMessage}</p>
+            <p style={{ fontSize: '15px', color: '#4ade80', fontWeight: '500' }}>{successMessage}</p>
           </div>
         )}
 
         {/* Error Message */}
         {error && approver && (
-          <div className="bg-status-error/20 border border-status-error rounded-lg p-4 mb-6">
-            <p className="text-status-error-text text-sm">{error}</p>
+          <div style={{
+            backgroundColor: 'rgba(90, 45, 45, 0.2)',
+            border: '1px solid #5a2d2d',
+            borderRadius: '8px',
+            padding: '16px 20px',
+            marginBottom: '24px'
+          }}>
+            <p style={{ fontSize: '14px', color: '#f87171' }}>{error}</p>
           </div>
         )}
 
         {/* Pending Count */}
-        <div className="card-dark p-6 mb-8">
+        <div className="card-dark" style={{ padding: '28px', marginBottom: '32px' }}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm uppercase tracking-wider">Pending Your Approval</p>
-              <p className="text-4xl font-light text-white mt-2">{invoices.length}</p>
+              <p style={{ fontSize: '12px', color: '#8a94a6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                Pending Your Approval
+              </p>
+              <p style={{ fontSize: '42px', fontWeight: '300', color: '#ffffff', marginTop: '8px' }}>{invoices.length}</p>
             </div>
             <button
               onClick={loadData}
-              className="px-4 py-2 text-text-secondary hover:text-white transition-colors"
+              style={{
+                padding: '10px',
+                color: '#8a94a6',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                borderRadius: '8px',
+                transition: 'color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#8a94a6'}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
             </button>
@@ -378,17 +451,26 @@ export default function ApproverDashboard() {
 
         {/* Invoice List */}
         {invoices.length === 0 ? (
-          <div className="card-dark p-12 text-center">
-            <div className="w-20 h-20 bg-dark-elevated rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-status-success-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="card-dark text-center" style={{ padding: '60px 40px' }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#1b2838',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 24px'
+            }}>
+              <svg className="w-10 h-10" style={{ color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-xl font-medium text-white mb-2">All caught up!</h3>
-            <p className="text-text-secondary">No timecards pending your approval.</p>
+            <h3 style={{ fontSize: '22px', fontWeight: '500', color: '#ffffff', marginBottom: '8px' }}>All caught up!</h3>
+            <p style={{ fontSize: '15px', color: '#8a94a6' }}>No timecards pending your approval.</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {invoices.map((invoice) => (
               <InvoiceCard
                 key={invoice.id}
