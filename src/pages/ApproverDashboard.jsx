@@ -89,7 +89,7 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
         </div>
 
         {/* Week 2 */}
-        <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+        <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
           <div className="flex justify-between items-start" style={{ marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', color: '#8a94a6', fontWeight: '500' }}>Week 2</span>
             <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>
@@ -105,6 +105,47 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
             </p>
           )}
         </div>
+
+        {/* Expenses */}
+        {(() => {
+          const expenses = invoice.expenses ? (typeof invoice.expenses === 'string' ? JSON.parse(invoice.expenses) : invoice.expenses) : [];
+          const expensesTotal = invoice.expenses_total || 0;
+
+          if (expenses.length === 0) return null;
+
+          return (
+            <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+              <div className="flex justify-between items-start" style={{ marginBottom: '12px' }}>
+                <span style={{ fontSize: '14px', color: '#8a94a6', fontWeight: '500' }}>Expenses</span>
+                <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>
+                  ${expensesTotal.toFixed(2)}
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {expenses.map((expense, index) => (
+                  <div key={index} style={{ paddingTop: index > 0 ? '12px' : '0', borderTop: index > 0 ? '1px solid #2d3f50' : 'none' }}>
+                    <div className="flex justify-between items-start">
+                      <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>
+                        {expense.merchant || 'Unknown merchant'}
+                      </span>
+                      <span style={{ fontSize: '13px', color: '#ffffff' }}>
+                        ${(parseFloat(expense.amount) || 0).toFixed(2)}
+                      </span>
+                    </div>
+                    {expense.description && (
+                      <p style={{ marginTop: '6px', fontSize: '12px', color: '#8a94a6', fontStyle: 'italic' }}>
+                        "{expense.description}"
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <p style={{ marginTop: '12px', fontSize: '11px', color: '#5a6478', fontStyle: 'italic' }}>
+                * Expenses are not subject to tax
+              </p>
+            </div>
+          );
+        })()}
 
         {/* Totals */}
         <div style={{ borderTop: '1px solid #2d3f50', paddingTop: '16px' }}>
