@@ -742,3 +742,54 @@ export async function sendTimecardReminder(contractor, payPeriodStart, payPeriod
     throw new Error(error.message || 'Failed to send reminder email');
   }
 }
+
+/**
+ * Update contractor active status
+ */
+export async function updateContractorStatus(contractorId, isActive) {
+  const { data, error } = await supabase
+    .from('contractors')
+    .update({ is_active: isActive })
+    .eq('id', contractorId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating contractor status:', error);
+    throw new Error(error.message || 'Failed to update contractor status');
+  }
+
+  return data;
+}
+
+/**
+ * Send summary notification to Chris (Level 2 approver)
+ */
+export async function sendChrisSummary(triggeredBy, payPeriodStart, payPeriodEnd) {
+  if (!N8N_WEBHOOK_URL) {
+    throw new Error('Webhook URL not configured');
+  }
+
+  try {
+    const response = await fetch(N8N_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'force_chris_notification',
+        triggeredBy,
+        payPeriodStart,
+        payPeriodEnd,
+        sentAt: new Date().toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send summary');
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending Chris summary:', error);
+    throw new Error(error.message || 'Failed to send summary to Chris');
+  }
+}

@@ -6,9 +6,11 @@ import {
   approveInvoice,
   rejectInvoice,
 } from '../lib/api';
-import { formatDateRange } from '../lib/payPeriod';
+import { formatDateRange, getCurrentPayPeriod } from '../lib/payPeriod';
 import ContractorStatusPanel from '../components/ContractorStatusPanel';
 import SendReminderModal from '../components/SendReminderModal';
+import ManageContractors from '../components/ManageContractors';
+import SendChrisSummaryModal from '../components/SendChrisSummaryModal';
 
 const LOGO_URL = "https://static.wixstatic.com/media/edda46_11cebb29dd364966929fec216683b3f3~mv2.png/v1/fill/w_486,h_344,al_c,lg_1,q_85,enc_avif,quality_auto/IA%20LOGO.png";
 const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/175a8bbd-61af-4377-8b41-d082d2321fb5/TimecardBH2.jpg?content-type=image%2Fjpeg";
@@ -423,6 +425,10 @@ export default function ApproverDashboard() {
   const [successMessage, setSuccessMessage] = useState('');
   const [reminderContractor, setReminderContractor] = useState(null);
   const [reminderPayPeriod, setReminderPayPeriod] = useState(null);
+  const [showChrisSummaryModal, setShowChrisSummaryModal] = useState(false);
+  const [chrisSummaryCooldown, setChrisSummaryCooldown] = useState(false);
+
+  const currentPayPeriod = getCurrentPayPeriod();
 
   const handleSendReminder = (contractor, payPeriod) => {
     setReminderContractor(contractor);
@@ -437,6 +443,14 @@ export default function ApproverDashboard() {
   const handleReminderSuccess = () => {
     setSuccessMessage('Reminder email sent successfully');
     setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const handleChrisSummarySuccess = () => {
+    setSuccessMessage('Summary sent to Chris');
+    setTimeout(() => setSuccessMessage(''), 3000);
+    // Set cooldown to prevent double-sends
+    setChrisSummaryCooldown(true);
+    setTimeout(() => setChrisSummaryCooldown(false), 10000);
   };
 
   const loadData = useCallback(async () => {
@@ -753,11 +767,68 @@ export default function ApproverDashboard() {
               </div>
             </div>
 
-            {/* Contractor Status Panel - Only for Level 1 approvers (Nick) */}
+            {/* Level 1 Approver Tools (Nick) */}
             {approver?.approval_level === 1 && (
-              <div style={{ marginBottom: '32px' }}>
-                <ContractorStatusPanel onSendReminder={handleSendReminder} />
-              </div>
+              <>
+                {/* Send Summary to Chris Button */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '24px'
+                }}>
+                  <button
+                    onClick={() => setShowChrisSummaryModal(true)}
+                    disabled={chrisSummaryCooldown}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 16px',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #2d4a6a',
+                      borderRadius: '8px',
+                      color: chrisSummaryCooldown ? '#5a6478' : '#60a5fa',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: chrisSummaryCooldown ? 'not-allowed' : 'pointer',
+                      opacity: chrisSummaryCooldown ? 0.5 : 1,
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!chrisSummaryCooldown) {
+                        e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
+                        e.currentTarget.style.borderColor = '#60a5fa';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.borderColor = '#2d4a6a';
+                    }}
+                    title="Use this if the automatic notification didn't trigger, such as after marking a contractor inactive"
+                  >
+                    <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Send Summary to Chris
+                  </button>
+                  <div style={{ position: 'relative' }} className="group">
+                    <svg style={{ width: '16px', height: '16px', color: '#5a6478', cursor: 'help' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Contractor Status Panel */}
+                <div style={{ marginBottom: '32px' }}>
+                  <ContractorStatusPanel onSendReminder={handleSendReminder} />
+                </div>
+
+                {/* Manage Contractors */}
+                <div style={{ marginBottom: '32px' }}>
+                  <ManageContractors onStatusChange={loadData} />
+                </div>
+              </>
             )}
 
             {/* Invoice List */}
@@ -811,6 +882,16 @@ export default function ApproverDashboard() {
           payPeriod={reminderPayPeriod}
           onClose={handleReminderClose}
           onSuccess={handleReminderSuccess}
+        />
+      )}
+
+      {/* Send Chris Summary Modal */}
+      {showChrisSummaryModal && (
+        <SendChrisSummaryModal
+          approverName={approver?.name}
+          payPeriod={currentPayPeriod}
+          onClose={() => setShowChrisSummaryModal(false)}
+          onSuccess={handleChrisSummarySuccess}
         />
       )}
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import InvoiceTable from '../components/InvoiceTable';
 import ContractorList from '../components/ContractorList';
 import SendReminderModal from '../components/SendReminderModal';
+import ManageContractors from '../components/ManageContractors';
 import {
   getAllContractors,
   getAllInvoices,
@@ -512,6 +513,7 @@ export default function Admin() {
                   isLoading={loading}
                   onSendReminder={handleSendReminder}
                 />
+                <ManageContractors onStatusChange={loadData} />
               </div>
             </div>
           </div>
