@@ -1,24 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WeekRow from './WeekRow';
-import { getCurrentPayPeriod, getPayPeriodLabel } from '../lib/payPeriod';
+import { getPayPeriodLabel } from '../lib/payPeriod';
 
 export default function TimecardForm({
   contractor,
+  payPeriod,
   existingInvoice,
   onSubmit,
   isSubmitting = false,
+  readOnly = false,
 }) {
-  const payPeriod = getCurrentPayPeriod();
-  const readOnly = existingInvoice?.status && existingInvoice.status !== 'pending';
-
   const [formData, setFormData] = useState({
-    week1Hours: existingInvoice?.week_1_hours || 0,
-    week1Rate: existingInvoice?.week_1_rate || contractor?.default_hourly_rate || 0,
-    week1Notes: existingInvoice?.week_1_notes || '',
-    week2Hours: existingInvoice?.week_2_hours || 0,
-    week2Rate: existingInvoice?.week_2_rate || contractor?.default_hourly_rate || 0,
-    week2Notes: existingInvoice?.week_2_notes || '',
+    week1Hours: 0,
+    week1Rate: contractor?.default_hourly_rate || 0,
+    week1Notes: '',
+    week2Hours: 0,
+    week2Rate: contractor?.default_hourly_rate || 0,
+    week2Notes: '',
   });
+
+  // Reset form when invoice or pay period changes
+  useEffect(() => {
+    setFormData({
+      week1Hours: existingInvoice?.week_1_hours || 0,
+      week1Rate: existingInvoice?.week_1_rate || contractor?.default_hourly_rate || 0,
+      week1Notes: existingInvoice?.week_1_notes || '',
+      week2Hours: existingInvoice?.week_2_hours || 0,
+      week2Rate: existingInvoice?.week_2_rate || contractor?.default_hourly_rate || 0,
+      week2Notes: existingInvoice?.week_2_notes || '',
+    });
+  }, [existingInvoice, contractor?.default_hourly_rate]);
 
   const week1Amount = formData.week1Hours * formData.week1Rate;
   const week2Amount = formData.week2Hours * formData.week2Rate;
@@ -126,7 +137,7 @@ export default function TimecardForm({
         </button>
       )}
 
-      {readOnly && (
+      {readOnly && existingInvoice && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
           <p className="text-sm text-blue-700">
             This timecard has already been submitted and is currently in{' '}
