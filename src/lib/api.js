@@ -120,7 +120,7 @@ export async function submitTimecard(contractorId, timecardData, payPeriod, isRe
 
     if (error) {
       console.error('Error updating invoice:', error);
-      throw new Error('Failed to update timecard');
+      throw new Error(error.message || 'Failed to update timecard');
     }
     result = data;
   } else {
@@ -133,7 +133,7 @@ export async function submitTimecard(contractorId, timecardData, payPeriod, isRe
 
     if (error) {
       console.error('Error creating invoice:', error);
-      throw new Error('Failed to submit timecard');
+      throw new Error(error.message || 'Failed to submit timecard');
     }
     result = data;
   }
