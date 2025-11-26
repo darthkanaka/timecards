@@ -47,8 +47,7 @@ export default function WeekRow({
             value={hours || ''}
             onChange={(e) => onHoursChange(parseFloat(e.target.value) || 0)}
             disabled={readOnly}
-            className="input-underline"
-            style={{ height: '44px', fontSize: '16px' }}
+            className="input-filled"
             placeholder="0"
           />
         </div>
@@ -72,8 +71,7 @@ export default function WeekRow({
             value={rate || ''}
             onChange={(e) => onRateChange(parseFloat(e.target.value) || 0)}
             disabled={readOnly}
-            className="input-underline"
-            style={{ height: '44px', fontSize: '16px' }}
+            className="input-filled"
             placeholder="0.00"
           />
         </div>
@@ -121,19 +119,8 @@ export default function WeekRow({
           value={notes || ''}
           onChange={(e) => onNotesChange(e.target.value)}
           disabled={readOnly}
-          style={{
-            width: '100%',
-            minHeight: '110px',
-            backgroundColor: 'transparent',
-            border: 'none',
-            borderBottom: '1px solid #2d3f50',
-            color: '#ffffff',
-            fontSize: '16px',
-            padding: '10px 0',
-            outline: 'none',
-            resize: 'none',
-            fontFamily: 'inherit'
-          }}
+          className="textarea-filled"
+          style={{ minHeight: '110px' }}
           placeholder="Describe work completed this week..."
         />
       </div>
