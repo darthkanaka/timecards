@@ -21,7 +21,6 @@ export default function TimecardForm({
     taxRate: '',
   });
 
-  // Reset form when invoice or pay period changes
   useEffect(() => {
     setFormData({
       week1Hours: existingInvoice?.week_1_hours || 0,
@@ -38,7 +37,6 @@ export default function TimecardForm({
   const week2Amount = formData.week2Hours * formData.week2Rate;
   const subtotal = week1Amount + week2Amount;
 
-  // Parse tax rate - empty string or invalid becomes 0
   const taxRateValue = formData.taxRate === '' ? 0 : parseFloat(formData.taxRate) || 0;
   const taxAmount = subtotal * taxRateValue;
   const totalAmount = subtotal + taxAmount;
@@ -48,7 +46,7 @@ export default function TimecardForm({
     if (!readOnly && onSubmit) {
       onSubmit({
         ...formData,
-        taxRate: taxRateValue || null, // Send null if no tax rate
+        taxRate: taxRateValue || null,
         taxAmount: taxRateValue ? taxAmount : null,
         totalAmount,
       });
@@ -56,23 +54,19 @@ export default function TimecardForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8">
       {/* Contractor Info */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Contractor Name
-            </label>
-            <div className="px-3 py-2 bg-gray-50 border rounded-md text-sm font-medium text-gray-700">
+            <label className="label-dark">Contractor Name</label>
+            <div className="text-white font-medium py-2 border-b border-dark-border">
               {contractor?.name || 'Unknown'}
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Pay Period
-            </label>
-            <div className="px-3 py-2 bg-gray-50 border rounded-md text-sm font-medium text-gray-700">
+            <label className="label-dark">Pay Period</label>
+            <div className="text-white font-medium py-2 border-b border-dark-border">
               {getPayPeriodLabel(payPeriod)}
             </div>
           </div>
@@ -80,8 +74,10 @@ export default function TimecardForm({
       </div>
 
       {/* Week Rows */}
-      <div>
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Hours & Rates</h2>
+      <div className="space-y-6">
+        <h2 className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+          Hours & Rates
+        </h2>
 
         <WeekRow
           weekNumber={1}
@@ -111,66 +107,62 @@ export default function TimecardForm({
       </div>
 
       {/* Tax Rate */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex-1 max-w-xs">
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Tax Rate (optional)
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="0"
-                max="1"
-                step="0.00001"
-                value={formData.taxRate}
-                onChange={(e) => setFormData({ ...formData, taxRate: e.target.value })}
-                disabled={readOnly}
-                className={`w-32 px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  readOnly ? 'bg-gray-100 text-gray-600' : 'bg-white'
-                }`}
-                placeholder="0.04712"
-              />
-              <span className="text-xs text-gray-500">e.g., 0.04712 for Hawaii GET</span>
-            </div>
+      <div className="space-y-4">
+        <div className="max-w-xs">
+          <label className="label-dark">Tax Rate (optional)</label>
+          <div className="flex items-center gap-4">
+            <input
+              type="number"
+              min="0"
+              max="1"
+              step="0.00001"
+              value={formData.taxRate}
+              onChange={(e) => setFormData({ ...formData, taxRate: e.target.value })}
+              disabled={readOnly}
+              className="input-underline w-32"
+              placeholder="0.04712"
+            />
+            <span className="text-xs text-text-muted">e.g., 0.04712 for Hawaii GET</span>
           </div>
         </div>
       </div>
 
       {/* Totals */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">Summary</h2>
-        <div className="space-y-2">
+      <div className="card-dark p-6">
+        <h2 className="text-xs font-medium text-text-secondary uppercase tracking-wider mb-4">
+          Summary
+        </h2>
+        <div className="space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Week 1 Total</span>
-            <span className="font-medium">${week1Amount.toFixed(2)}</span>
+            <span className="text-text-secondary">Week 1 Total</span>
+            <span className="text-white font-medium">${week1Amount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Week 2 Total</span>
-            <span className="font-medium">${week2Amount.toFixed(2)}</span>
+            <span className="text-text-secondary">Week 2 Total</span>
+            <span className="text-white font-medium">${week2Amount.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-sm text-gray-500">
+          <div className="flex justify-between text-sm text-text-muted">
             <span>Total Hours</span>
             <span>{formData.week1Hours + formData.week2Hours} hours</span>
           </div>
 
-          <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
-            <span className="text-gray-700 font-medium">Subtotal</span>
-            <span className="font-medium">${subtotal.toFixed(2)}</span>
+          <div className="flex justify-between text-sm pt-3 border-t border-dark-border">
+            <span className="text-text-secondary font-medium">Subtotal</span>
+            <span className="text-white font-medium">${subtotal.toFixed(2)}</span>
           </div>
 
           {taxRateValue > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">
+              <span className="text-text-secondary">
                 Tax ({(taxRateValue * 100).toFixed(3)}%)
               </span>
-              <span className="font-medium">${taxAmount.toFixed(2)}</span>
+              <span className="text-white font-medium">${taxAmount.toFixed(2)}</span>
             </div>
           )}
 
-          <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
-            <span className="font-semibold text-gray-700">Total Amount</span>
-            <span className="font-bold text-lg text-green-600">
+          <div className="flex justify-between pt-3 border-t border-dark-border">
+            <span className="text-white font-semibold">Total Amount</span>
+            <span className="text-xl font-bold text-status-success-text">
               ${totalAmount.toFixed(2)}
             </span>
           </div>
@@ -182,12 +174,12 @@ export default function TimecardForm({
         <button
           type="submit"
           disabled={isSubmitting || subtotal === 0}
-          className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${
+          className={`w-full py-4 px-6 rounded-lg font-medium text-white transition-all duration-200 ${
             isSubmitting || subtotal === 0
-              ? 'bg-gray-400 cursor-not-allowed'
+              ? 'bg-accent/50 cursor-not-allowed'
               : isResubmission
-                ? 'bg-orange-600 hover:bg-orange-700'
-                : 'bg-blue-600 hover:bg-blue-700'
+                ? 'bg-status-warning hover:bg-status-warning/80'
+                : 'bg-accent hover:bg-accent-hover'
           }`}
         >
           {isSubmitting ? 'Submitting...' : isResubmission ? 'Resubmit Timecard' : 'Submit Timecard'}
@@ -195,10 +187,10 @@ export default function TimecardForm({
       )}
 
       {readOnly && existingInvoice && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-          <p className="text-sm text-blue-700">
+        <div className="card-dark p-4 text-center">
+          <p className="text-sm text-text-secondary">
             This timecard has already been submitted and is currently in{' '}
-            <span className="font-medium">{existingInvoice.status.replace('_', ' ')}</span> status.
+            <span className="text-white font-medium">{existingInvoice.status.replace('_', ' ')}</span> status.
           </p>
         </div>
       )}

@@ -2,8 +2,113 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: #0a1628;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d1b2a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3d4f5f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4d6070;
+}
+
+/* Underline-style inputs */
+.input-underline {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #2d3f50;
+  color: #ffffff;
+  padding: 0.5rem 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-underline::placeholder {
+  color: #5a6478;
+}
+
+.input-underline:focus {
+  border-color: #8a94a6;
+}
+
+.input-underline:disabled {
+  color: #8a94a6;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.label-dark {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #8a94a6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.btn-dark {
+  padding: 0.75rem 1.5rem;
+  background-color: #3d4f5f;
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-dark:hover {
+  background-color: #4d6070;
+}
+
+.btn-dark:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-dark {
+  background-color: #0d1b2a;
+  border: 1px solid #2d3f50;
+  border-radius: 0.5rem;
+}
+
+.badge-dark {
+  display: inline-flex;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+}
+
+/* Animation for loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
