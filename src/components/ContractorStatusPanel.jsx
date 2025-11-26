@@ -46,12 +46,12 @@ export default function ContractorStatusPanel({ onSendReminder }) {
   }, [loadContractors]);
 
   const handlePreviousPeriod = () => {
-    setPayPeriod(getPreviousPayPeriod(payPeriod.periodStart));
+    setPayPeriod(getPreviousPayPeriod(payPeriod));
   };
 
   const handleNextPeriod = () => {
     if (!isCurrentPeriod(payPeriod)) {
-      setPayPeriod(getNextPayPeriod(payPeriod.periodStart));
+      setPayPeriod(getNextPayPeriod(payPeriod));
     }
   };
 
