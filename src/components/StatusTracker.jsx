@@ -16,14 +16,14 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
 
   if (status === 'pending') {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div className="bg-status-warning/20 border border-status-warning/50 rounded-lg p-4">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-          <span className="text-sm font-medium text-yellow-800">
+          <div className="w-3 h-3 bg-status-warning-text rounded-full"></div>
+          <span className="text-sm font-medium text-status-warning-text">
             Pending Submission
           </span>
         </div>
-        <p className="text-sm text-yellow-700 mt-1">
+        <p className="text-sm text-status-warning-text/80 mt-1">
           Your timecard for this pay period has not been submitted yet.
         </p>
       </div>
@@ -32,22 +32,22 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
 
   if (status === 'rejected') {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="bg-status-error/20 border border-status-error/50 rounded-lg p-4">
         <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-status-error-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <span className="text-sm font-semibold text-red-800">
+          <span className="text-sm font-semibold text-status-error-text">
             Timecard Rejected
           </span>
         </div>
         {rejectionInfo.reason && (
-          <div className="mt-3 bg-white border border-red-200 rounded-md p-3">
-            <p className="text-xs font-medium text-red-700 mb-1">Rejection Reason:</p>
-            <p className="text-sm text-red-900">{rejectionInfo.reason}</p>
+          <div className="mt-3 bg-dark-elevated border border-status-error/30 rounded-md p-3">
+            <p className="text-xs font-medium text-status-error-text mb-1">Rejection Reason:</p>
+            <p className="text-sm text-white">{rejectionInfo.reason}</p>
           </div>
         )}
-        <div className="mt-3 text-xs text-red-600">
+        <div className="mt-3 text-xs text-status-error-text/70">
           {rejectionInfo.rejectedBy && (
             <p>Rejected by: {rejectionInfo.rejectedBy}</p>
           )}
@@ -63,7 +63,7 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
             </p>
           )}
         </div>
-        <p className="text-sm text-red-700 mt-3 font-medium">
+        <p className="text-sm text-status-error-text mt-3 font-medium">
           Please review the feedback, make any necessary changes, and resubmit your timecard.
         </p>
       </div>
@@ -71,14 +71,14 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-gray-700 mb-4">Invoice Status</h3>
+    <div className="card-dark p-4">
+      <h3 className="text-sm font-medium text-text-secondary uppercase tracking-wider mb-4">Invoice Status</h3>
 
       <div className="relative">
         {/* Progress line */}
-        <div className="absolute left-3 top-3 bottom-3 w-0.5 bg-gray-200"></div>
+        <div className="absolute left-3 top-3 bottom-3 w-0.5 bg-dark-border"></div>
         <div
-          className="absolute left-3 top-3 w-0.5 bg-green-500 transition-all duration-300"
+          className="absolute left-3 top-3 w-0.5 bg-status-success-text transition-all duration-300"
           style={{
             height: `${Math.max(0, currentIndex) * 60 + (currentIndex >= 0 ? 20 : 0)}px`,
           }}
@@ -95,13 +95,13 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 z-10 ${
                     isCompleted
-                      ? 'bg-green-500'
-                      : 'bg-gray-200'
+                      ? 'bg-status-success'
+                      : 'bg-dark-border'
                   }`}
                 >
                   {isCompleted ? (
                     <svg
-                      className="w-3.5 h-3.5 text-white"
+                      className="w-3.5 h-3.5 text-status-success-text"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
                       />
                     </svg>
                   ) : (
-                    <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-text-muted rounded-full"></div>
                   )}
                 </div>
 
@@ -122,22 +122,22 @@ export default function StatusTracker({ status, timestamps = {}, rejectionInfo =
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-sm font-medium ${
-                        isCompleted ? 'text-gray-900' : 'text-gray-500'
+                        isCompleted ? 'text-white' : 'text-text-muted'
                       }`}
                     >
                       {step.label}
                     </span>
                     {isCurrent && (
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-status-info text-status-info-text text-xs rounded-full">
                         Current
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-text-muted mt-0.5">
                     {step.description}
                   </p>
                   {isCompleted && timestamps[step.key] && (
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-text-muted mt-1">
                       {new Date(timestamps[step.key]).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',

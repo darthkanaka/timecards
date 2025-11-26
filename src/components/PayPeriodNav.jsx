@@ -7,10 +7,10 @@ export default function PayPeriodNav({ payPeriod, onPrevious, onNext }) {
   });
 
   return (
-    <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3">
+    <div className="flex items-center justify-between card-dark p-3">
       <button
         onClick={onPrevious}
-        className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+        className="p-2 rounded-lg hover:bg-dark-elevated transition-colors text-text-secondary hover:text-white"
         title="Previous pay period"
       >
         <svg
@@ -29,14 +29,14 @@ export default function PayPeriodNav({ payPeriod, onPrevious, onNext }) {
       </button>
 
       <div className="text-center">
-        <p className="text-sm font-semibold text-gray-900">
+        <p className="text-sm font-medium text-white">
           {getPayPeriodLabel(payPeriod)}
         </p>
         {isCurrent && (
-          <span className="text-xs text-blue-600 font-medium">Current Period</span>
+          <span className="text-xs text-status-info-text font-medium">Current Period</span>
         )}
         {!isCurrent && !isFuturePeriod(payPeriod) && (
-          <span className="text-xs text-gray-500">Past Period</span>
+          <span className="text-xs text-text-muted">Past Period</span>
         )}
       </div>
 
@@ -45,8 +45,8 @@ export default function PayPeriodNav({ payPeriod, onPrevious, onNext }) {
         disabled={nextPeriodIsFuture}
         className={`p-2 rounded-lg transition-colors ${
           nextPeriodIsFuture
-            ? 'text-gray-300 cursor-not-allowed'
-            : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+            ? 'text-text-muted cursor-not-allowed'
+            : 'hover:bg-dark-elevated text-text-secondary hover:text-white'
         }`}
         title={nextPeriodIsFuture ? "Can't view future periods" : 'Next pay period'}
       >

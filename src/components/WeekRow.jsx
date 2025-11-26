@@ -16,17 +16,15 @@ export default function WeekRow({
   const amount = (hours || 0) * (rate || 0);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-700">Week {weekNumber}</h3>
-        <span className="text-sm text-gray-500">{dateRange}</span>
+    <div className="card-dark p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-white font-medium">Week {weekNumber}</h3>
+        <span className="text-text-secondary text-sm">{dateRange}</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">
-            Hours Worked
-          </label>
+          <label className="label-dark">Hours Worked</label>
           <input
             type="number"
             min="0"
@@ -35,17 +33,13 @@ export default function WeekRow({
             value={hours || ''}
             onChange={(e) => onHoursChange(parseFloat(e.target.value) || 0)}
             disabled={readOnly}
-            className={`w-full px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              readOnly ? 'bg-gray-100 text-gray-600' : 'bg-white'
-            }`}
+            className="input-underline"
             placeholder="0"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">
-            Hourly Rate ($)
-          </label>
+          <label className="label-dark">Hourly Rate ($)</label>
           <input
             type="number"
             min="0"
@@ -53,35 +47,27 @@ export default function WeekRow({
             value={rate || ''}
             onChange={(e) => onRateChange(parseFloat(e.target.value) || 0)}
             disabled={readOnly}
-            className={`w-full px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              readOnly ? 'bg-gray-100 text-gray-600' : 'bg-white'
-            }`}
+            className="input-underline"
             placeholder="0.00"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">
-            Amount
-          </label>
-          <div className="px-3 py-2 bg-gray-50 border rounded-md text-sm font-medium text-gray-700">
+          <label className="label-dark">Amount</label>
+          <div className="text-white font-medium py-2 border-b border-dark-border">
             ${amount.toFixed(2)}
           </div>
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-500 mb-1">
-          Work Description / Notes
-        </label>
+        <label className="label-dark">Work Description / Notes</label>
         <textarea
           value={notes || ''}
           onChange={(e) => onNotesChange(e.target.value)}
           disabled={readOnly}
           rows={2}
-          className={`w-full px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-            readOnly ? 'bg-gray-100 text-gray-600' : 'bg-white'
-          }`}
+          className="input-underline resize-none"
           placeholder="Describe work completed this week..."
         />
       </div>
