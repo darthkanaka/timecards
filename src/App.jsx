@@ -2,7 +2,6 @@ import { HashRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Timecard from './pages/Timecard';
 import Admin from './pages/Admin';
 import ApproverDashboard from './pages/ApproverDashboard';
-import './index.css';
 
 function HomePage() {
   return (

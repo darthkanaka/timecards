@@ -1,18 +1,61 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+/* Theme configuration for Tailwind v4 */
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --color-dark-bg: #0a1628;
+  --color-dark-card: #0d1b2a;
+  --color-dark-elevated: #1b2838;
+  --color-dark-border: #2d3f50;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #8a94a6;
+  --color-text-muted: #5a6478;
+
+  --color-accent: #3d4f5f;
+  --color-accent-hover: #4d6070;
+  --color-accent-active: #5d7080;
+
+  --color-status-success: #2d5a3d;
+  --color-status-success-text: #4ade80;
+  --color-status-error: #5a2d2d;
+  --color-status-error-text: #f87171;
+  --color-status-warning: #5a4d2d;
+  --color-status-warning-text: #fbbf24;
+  --color-status-info: #2d4a5a;
+  --color-status-info-text: #60a5fa;
+}
+
+/* Critical: Ensure proper document structure for fixed positioning */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
   min-height: 100vh;
   background-color: #0a1628;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Custom scrollbar for dark theme */
