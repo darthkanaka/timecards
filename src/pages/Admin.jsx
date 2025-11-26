@@ -81,12 +81,17 @@ export default function Admin() {
     }
     try {
       setActionLoading(true);
+      setError(null); // Clear any previous errors
+      console.log('Attempting to delete invoice:', invoiceId);
       await deleteInvoice(invoiceId);
+      console.log('Delete successful');
       setSelectedInvoice(null);
       await loadData();
     } catch (err) {
       console.error('Error deleting invoice:', err);
-      setError(err.message || 'Failed to delete invoice');
+      const errorMessage = err.message || 'Failed to delete invoice';
+      setError(errorMessage);
+      alert('Delete failed: ' + errorMessage); // Show alert for immediate visibility
     } finally {
       setActionLoading(false);
     }
@@ -496,6 +501,18 @@ export default function Admin() {
                     Chris (2/2): {new Date(selectedInvoice.approval_2_at).toLocaleString()}
                     {selectedInvoice.approval_2_by && ` by ${selectedInvoice.approval_2_by}`}
                   </p>
+                </div>
+              )}
+              {/* Error display inside modal */}
+              {error && (
+                <div style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginBottom: '16px'
+                }}>
+                  <p style={{ color: '#fca5a5', fontSize: '13px' }}>{error}</p>
                 </div>
               )}
               {/* Delete Button */}
