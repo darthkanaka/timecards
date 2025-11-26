@@ -279,7 +279,7 @@ export default function Timecard() {
           <img src={LOGO_URL} alt="InvizArts" style={{ width: '80px', height: 'auto' }} />
         </div>
 
-        <div className="px-8 py-10 lg:px-12 lg:py-14 max-w-2xl">
+        <div className="px-8 py-10 lg:px-12 lg:py-14 lg:pr-16">
           {/* Header */}
           <div className="mb-10">
             <h1 className="text-white font-normal tracking-wide" style={{ fontSize: '30px' }}>
