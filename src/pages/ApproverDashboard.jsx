@@ -257,6 +257,7 @@ export default function ApproverDashboard() {
       setInvoices(pendingInvoices);
     } catch (err) {
       console.error('Error loading invoices:', err);
+      setError(err.message || 'Failed to load pending invoices');
     }
   }, [approver]);
 
@@ -275,7 +276,7 @@ export default function ApproverDashboard() {
         setApprover(approverData);
       } catch (err) {
         console.error('Error loading approver:', err);
-        setError('Failed to load dashboard');
+        setError(err.message || 'Failed to load dashboard');
       } finally {
         setLoading(false);
       }

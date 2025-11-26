@@ -16,6 +16,10 @@ export async function getContractorByToken(token) {
 
   if (error) {
     console.error('Error fetching contractor:', error);
+    // PGRST116 means no rows found - that's expected for invalid tokens
+    if (error.code !== 'PGRST116') {
+      throw new Error(error.message || 'Failed to load contractor');
+    }
     return null;
   }
 
@@ -171,7 +175,7 @@ export async function deleteInvoice(invoiceId) {
 
   if (error) {
     console.error('Error deleting invoice:', error);
-    throw new Error('Failed to delete invoice');
+    throw new Error(error.message || 'Failed to delete invoice');
   }
 
   return true;
@@ -188,7 +192,7 @@ export async function getAllContractors() {
 
   if (error) {
     console.error('Error fetching contractors:', error);
-    return [];
+    throw new Error(error.message || 'Failed to load contractors');
   }
 
   return data || [];
@@ -226,7 +230,7 @@ export async function getAllInvoices(filters = {}) {
 
   if (error) {
     console.error('Error fetching invoices:', error);
-    return [];
+    throw new Error(error.message || 'Failed to load invoices');
   }
 
   return data || [];
@@ -252,6 +256,9 @@ export async function getInvoiceById(invoiceId) {
 
   if (error) {
     console.error('Error fetching invoice:', error);
+    if (error.code !== 'PGRST116') {
+      throw new Error(error.message || 'Failed to load invoice');
+    }
     return null;
   }
 
@@ -297,7 +304,7 @@ export async function advanceInvoiceStatus(invoiceId, approverName = 'Admin') {
 
   if (error) {
     console.error('Error advancing invoice:', error);
-    throw new Error('Failed to advance invoice status');
+    throw new Error(error.message || 'Failed to advance invoice status');
   }
 
   // Trigger n8n webhook for status change notification
@@ -339,7 +346,7 @@ export async function getPayPeriodSummary(payPeriodStart) {
 
   if (invoicesError) {
     console.error('Error fetching period summary:', invoicesError);
-    return null;
+    throw new Error(invoicesError.message || 'Failed to load period summary');
   }
 
   const { data: contractors, error: contractorsError } = await supabase
@@ -349,7 +356,7 @@ export async function getPayPeriodSummary(payPeriodStart) {
 
   if (contractorsError) {
     console.error('Error fetching contractors:', contractorsError);
-    return null;
+    throw new Error(contractorsError.message || 'Failed to load contractors');
   }
 
   const submittedIds = new Set(invoices?.map(i => i.contractor_id) || []);
@@ -382,6 +389,10 @@ export async function getApproverByToken(token) {
 
   if (error) {
     console.error('Error fetching approver:', error);
+    // PGRST116 means no rows found - that's expected for invalid tokens
+    if (error.code !== 'PGRST116') {
+      throw new Error(error.message || 'Failed to load approver');
+    }
     return null;
   }
 
@@ -413,7 +424,7 @@ export async function getInvoicesPendingApproval(approvalLevel) {
 
   if (error) {
     console.error('Error fetching pending invoices:', error);
-    return [];
+    throw new Error(error.message || 'Failed to load pending invoices');
   }
 
   return data || [];
@@ -460,7 +471,7 @@ export async function approveInvoice(invoiceId, approverName, approvalLevel) {
 
   if (error) {
     console.error('Error approving invoice:', error);
-    throw new Error('Failed to approve invoice');
+    throw new Error(error.message || 'Failed to approve invoice');
   }
 
   // Trigger n8n webhook for approval notification
@@ -518,7 +529,7 @@ export async function rejectInvoice(invoiceId, approverName, rejectionReason) {
 
   if (error) {
     console.error('Error rejecting invoice:', error);
-    throw new Error('Failed to reject invoice');
+    throw new Error(error.message || 'Failed to reject invoice');
   }
 
   // Trigger n8n webhook for rejection notification
