@@ -9,7 +9,7 @@ import {
 import { formatDateRange } from '../lib/payPeriod';
 
 const LOGO_URL = "https://static.wixstatic.com/media/edda46_11cebb29dd364966929fec216683b3f3~mv2.png/v1/fill/w_486,h_344,al_c,lg_1,q_85,enc_avif,quality_auto/IA%20LOGO.png";
-const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/1a53ba70-7df5-4bfd-8896-3dbf6f6ba03c/DJI_0626-HDR-Pano.jpg?content-type=image%2Fjpeg";
+const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/e40c7e87-957a-4182-a7f7-89556b540617/TimecardBG.jpg?content-type=image%2Fjpeg";
 
 function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
   const [showRejectForm, setShowRejectForm] = useState(false);
@@ -525,17 +525,22 @@ export default function ApproverDashboard() {
             left: 0,
             width: '100%',
             height: '100vh',
-            zIndex: 0
+            zIndex: 0,
+            overflow: 'hidden'
           }}
         >
           <img
             src={BG_IMAGE_URL}
             alt=""
             style={{
-              width: '100%',
-              height: '100%',
+              width: '1600px',
+              height: '2000px',
               objectFit: 'cover',
-              objectPosition: 'center center'
+              objectPosition: 'center top',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
             }}
           />
           <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}></div>
@@ -602,17 +607,22 @@ export default function ApproverDashboard() {
           left: 0,
           width: '100%',
           height: '100vh',
-          zIndex: 0
+          zIndex: 0,
+          overflow: 'hidden'
         }}
       >
         <img
           src={BG_IMAGE_URL}
           alt=""
           style={{
-            width: '100%',
-            height: '100%',
+            width: '1600px',
+            height: '2000px',
             objectFit: 'cover',
-            objectPosition: 'center center'
+            objectPosition: 'center top',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
           }}
         />
         <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)' }}></div>
