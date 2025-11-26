@@ -193,18 +193,23 @@ export default function ContractorStatusPanel({ onSendReminder }) {
         ) : (
           contractors.map((contractor, idx) => {
             const status = STATUS_CONFIG[contractor.status] || STATUS_CONFIG.not_submitted;
+            const canSendReminder = contractor.status === 'not_submitted';
             return (
               <div
                 key={contractor.id}
-                onClick={() => onSendReminder && onSendReminder(contractor, payPeriod)}
+                onClick={() => canSendReminder && onSendReminder && onSendReminder(contractor, payPeriod)}
                 style={{
                   padding: '16px 24px',
                   borderBottom: idx < contractors.length - 1 ? '1px solid #2d3f50' : 'none',
-                  cursor: 'pointer',
+                  cursor: canSendReminder ? 'pointer' : 'default',
                   transition: 'background-color 0.2s'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1b2838'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                onMouseEnter={(e) => {
+                  if (canSendReminder) e.currentTarget.style.backgroundColor = '#1b2838';
+                }}
+                onMouseLeave={(e) => {
+                  if (canSendReminder) e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div>

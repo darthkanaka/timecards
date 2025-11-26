@@ -9,7 +9,15 @@ import {
   getPayPeriodSummary,
   deleteInvoice,
 } from '../lib/api';
-import { getCurrentPayPeriod, toISODateString, getPayPeriodLabel } from '../lib/payPeriod';
+import {
+  getCurrentPayPeriod,
+  getPreviousPayPeriod,
+  getNextPayPeriod,
+  isCurrentPeriod,
+  toISODateString,
+  getPayPeriodLabel,
+  formatDateRange,
+} from '../lib/payPeriod';
 
 const LOGO_URL = "https://static.wixstatic.com/media/edda46_11cebb29dd364966929fec216683b3f3~mv2.png/v1/fill/w_486,h_344,al_c,lg_1,q_85,enc_avif,quality_auto/IA%20LOGO.png";
 const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/e40c7e87-957a-4182-a7f7-89556b540617/TimecardBG.jpg?content-type=image%2Fjpeg";
@@ -35,9 +43,20 @@ export default function Admin() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [reminderContractor, setReminderContractor] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [payPeriod, setPayPeriod] = useState(getCurrentPayPeriod());
 
-  const payPeriod = getCurrentPayPeriod();
   const currentPeriodStart = toISODateString(payPeriod.periodStart);
+  const isCurrentPayPeriod = isCurrentPeriod(payPeriod);
+
+  const handlePreviousPeriod = () => {
+    setPayPeriod(getPreviousPayPeriod(payPeriod.periodStart));
+  };
+
+  const handleNextPeriod = () => {
+    if (!isCurrentPayPeriod) {
+      setPayPeriod(getNextPayPeriod(payPeriod.periodStart));
+    }
+  };
 
   const handleSendReminder = (contractor) => {
     // Create contractor object with status info for the modal
@@ -256,11 +275,66 @@ export default function Admin() {
                   letterSpacing: '0.08em',
                   marginBottom: '12px'
                 }}>
-                  Current Period
+                  Pay Period
                 </p>
-                <p style={{ color: '#ffffff', fontWeight: '500', fontSize: '15px' }}>
-                  {getPayPeriodLabel(payPeriod)}
-                </p>
+                <div className="flex items-center justify-between" style={{ gap: '8px' }}>
+                  <button
+                    onClick={handlePreviousPeriod}
+                    style={{
+                      padding: '4px',
+                      color: '#8a94a6',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '4px',
+                      transition: 'color 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#8a94a6'}
+                  >
+                    <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <div className="text-center" style={{ flex: 1 }}>
+                    <p style={{ color: '#ffffff', fontWeight: '500', fontSize: '14px' }}>
+                      {formatDateRange(payPeriod.periodStart, payPeriod.periodEnd)}
+                    </p>
+                    {isCurrentPayPeriod && (
+                      <span style={{
+                        fontSize: '10px',
+                        color: '#4ade80',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleNextPeriod}
+                    disabled={isCurrentPayPeriod}
+                    style={{
+                      padding: '4px',
+                      color: isCurrentPayPeriod ? '#3d4f5f' : '#8a94a6',
+                      background: 'none',
+                      border: 'none',
+                      cursor: isCurrentPayPeriod ? 'not-allowed' : 'pointer',
+                      borderRadius: '4px',
+                      transition: 'color 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isCurrentPayPeriod) e.currentTarget.style.color = '#ffffff';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isCurrentPayPeriod) e.currentTarget.style.color = '#8a94a6';
+                    }}
+                  >
+                    <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div style={{
                 backgroundColor: '#0d1b2a',
