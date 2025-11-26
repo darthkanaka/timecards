@@ -7,6 +7,8 @@ import {
   rejectInvoice,
 } from '../lib/api';
 import { formatDateRange } from '../lib/payPeriod';
+import ContractorStatusPanel from '../components/ContractorStatusPanel';
+import SendReminderModal from '../components/SendReminderModal';
 
 const LOGO_URL = "https://static.wixstatic.com/media/edda46_11cebb29dd364966929fec216683b3f3~mv2.png/v1/fill/w_486,h_344,al_c,lg_1,q_85,enc_avif,quality_auto/IA%20LOGO.png";
 const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd5509a028e/e40c7e87-957a-4182-a7f7-89556b540617/TimecardBG.jpg?content-type=image%2Fjpeg";
@@ -419,6 +421,23 @@ export default function ApproverDashboard() {
   const [error, setError] = useState(null);
   const [processingId, setProcessingId] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [reminderContractor, setReminderContractor] = useState(null);
+  const [reminderPayPeriod, setReminderPayPeriod] = useState(null);
+
+  const handleSendReminder = (contractor, payPeriod) => {
+    setReminderContractor(contractor);
+    setReminderPayPeriod(payPeriod);
+  };
+
+  const handleReminderClose = () => {
+    setReminderContractor(null);
+    setReminderPayPeriod(null);
+  };
+
+  const handleReminderSuccess = () => {
+    setSuccessMessage('Reminder email sent successfully');
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
 
   const loadData = useCallback(async () => {
     if (!approver) return;
@@ -742,6 +761,13 @@ export default function ApproverDashboard() {
               </div>
             </div>
 
+            {/* Contractor Status Panel - Only for Level 1 approvers (Nick) */}
+            {approver?.approval_level === 1 && (
+              <div style={{ marginBottom: '32px' }}>
+                <ContractorStatusPanel onSendReminder={handleSendReminder} />
+              </div>
+            )}
+
             {/* Invoice List */}
             {invoices.length === 0 ? (
               <div style={{
@@ -785,6 +811,16 @@ export default function ApproverDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Send Reminder Modal */}
+      {reminderContractor && reminderPayPeriod && (
+        <SendReminderModal
+          contractor={reminderContractor}
+          payPeriod={reminderPayPeriod}
+          onClose={handleReminderClose}
+          onSuccess={handleReminderSuccess}
+        />
+      )}
     </div>
   );
 }

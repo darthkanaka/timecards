@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import InvoiceTable from '../components/InvoiceTable';
 import ContractorList from '../components/ContractorList';
+import SendReminderModal from '../components/SendReminderModal';
 import {
   getAllContractors,
   getAllInvoices,
@@ -32,9 +33,30 @@ export default function Admin() {
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [reminderContractor, setReminderContractor] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const payPeriod = getCurrentPayPeriod();
   const currentPeriodStart = toISODateString(payPeriod.periodStart);
+
+  const handleSendReminder = (contractor) => {
+    // Create contractor object with status info for the modal
+    const contractorWithStatus = {
+      ...contractor,
+      invoice: summary?.invoices?.find(inv => inv.contractor_id === contractor.id) || null,
+      status: summary?.notSubmitted?.find(c => c.id === contractor.id) ? 'not_submitted' : 'submitted',
+    };
+    setReminderContractor(contractorWithStatus);
+  };
+
+  const handleReminderClose = () => {
+    setReminderContractor(null);
+  };
+
+  const handleReminderSuccess = () => {
+    setSuccessMessage('Reminder email sent successfully');
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
 
   const loadData = useCallback(async () => {
     try {
@@ -199,6 +221,22 @@ export default function Admin() {
                 marginBottom: '24px'
               }}>
                 <p style={{ color: '#fca5a5', fontSize: '14px' }}>{error}</p>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="flex items-center gap-4" style={{
+                backgroundColor: 'rgba(45, 90, 61, 0.2)',
+                border: '1px solid #2d5a3d',
+                borderRadius: '8px',
+                padding: '16px 20px',
+                marginBottom: '24px'
+              }}>
+                <svg style={{ width: '20px', height: '20px', color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p style={{ fontSize: '15px', color: '#4ade80', fontWeight: '500' }}>{successMessage}</p>
               </div>
             )}
 
@@ -402,6 +440,7 @@ export default function Admin() {
                   contractors={contractors}
                   notSubmitted={summary?.notSubmitted || []}
                   isLoading={loading}
+                  onSendReminder={handleSendReminder}
                 />
               </div>
             </div>
@@ -628,6 +667,16 @@ export default function Admin() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Send Reminder Modal */}
+      {reminderContractor && (
+        <SendReminderModal
+          contractor={reminderContractor}
+          payPeriod={payPeriod}
+          onClose={handleReminderClose}
+          onSuccess={handleReminderSuccess}
+        />
       )}
     </div>
   );
