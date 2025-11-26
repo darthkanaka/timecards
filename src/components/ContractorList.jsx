@@ -1,4 +1,4 @@
-export default function ContractorList({ contractors, notSubmitted = [], isLoading = false }) {
+export default function ContractorList({ contractors, notSubmitted = [], isLoading = false, onSendReminder }) {
   if (isLoading) {
     return (
       <div style={{
@@ -124,7 +124,7 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
                     </p>
                   </div>
                 </div>
-                <div style={{ marginTop: '10px' }}>
+                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <code style={{
                     fontSize: '11px',
                     color: '#5a6478',
@@ -134,6 +134,38 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
                   }}>
                     /timecard/{contractor.url_token}
                   </code>
+                  {onSendReminder && (
+                    <button
+                      onClick={() => onSendReminder(contractor)}
+                      style={{
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        color: '#60a5fa',
+                        backgroundColor: 'transparent',
+                        border: '1px solid rgba(96, 165, 250, 0.3)',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(96, 165, 250, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.5)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.3)';
+                      }}
+                    >
+                      <svg style={{ width: '12px', height: '12px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Remind
+                    </button>
+                  )}
                 </div>
               </div>
             );

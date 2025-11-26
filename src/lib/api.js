@@ -643,3 +643,102 @@ export async function getApproverActivity(approverName, limit = 10) {
 
   return data || [];
 }
+
+/**
+ * Get all contractors with their timecard status for a specific pay period
+ */
+export async function getContractorsWithStatus(payPeriodStart) {
+  // Get all active contractors
+  const { data: contractors, error: contractorsError } = await supabase
+    .from('contractors')
+    .select('*')
+    .eq('is_active', true)
+    .order('name');
+
+  if (contractorsError) {
+    console.error('Error fetching contractors:', contractorsError);
+    throw new Error(contractorsError.message || 'Failed to load contractors');
+  }
+
+  // Get all invoices for this pay period
+  const { data: invoices, error: invoicesError } = await supabase
+    .from('invoices')
+    .select('*')
+    .eq('pay_period_start', payPeriodStart);
+
+  if (invoicesError) {
+    console.error('Error fetching invoices:', invoicesError);
+    throw new Error(invoicesError.message || 'Failed to load invoices');
+  }
+
+  // Create a map of contractor_id to invoice
+  const invoiceMap = new Map();
+  invoices?.forEach(inv => invoiceMap.set(inv.contractor_id, inv));
+
+  // Combine contractors with their invoice status
+  const contractorsWithStatus = contractors?.map(contractor => ({
+    ...contractor,
+    invoice: invoiceMap.get(contractor.id) || null,
+    status: invoiceMap.get(contractor.id)?.status || 'not_submitted',
+  })) || [];
+
+  return contractorsWithStatus;
+}
+
+/**
+ * Send timecard reminder email via n8n webhook
+ */
+export async function sendTimecardReminder(contractor, payPeriodStart, payPeriodEnd, invoice = null, notes = '') {
+  if (!N8N_WEBHOOK_URL) {
+    throw new Error('Webhook URL not configured');
+  }
+
+  try {
+    const response = await fetch(N8N_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'timecard_reminder',
+        contractor: {
+          id: contractor.id,
+          name: contractor.name,
+          email: contractor.email,
+          company: contractor.company,
+          url_token: contractor.url_token,
+        },
+        contractorName: contractor.name,
+        contractorEmail: contractor.email,
+        contractorCompany: contractor.company,
+        contractorTimecardUrl: contractor.url_token,
+        payPeriodStart,
+        payPeriodEnd,
+        hasSubmitted: !!invoice,
+        invoiceStatus: invoice?.status || 'not_submitted',
+        invoice: invoice ? {
+          id: invoice.id,
+          status: invoice.status,
+          submittedAt: invoice.submitted_at,
+          totalAmount: invoice.total_amount,
+          week1Hours: invoice.week_1_hours,
+          week1Rate: invoice.week_1_rate,
+          week2Hours: invoice.week_2_hours,
+          week2Rate: invoice.week_2_rate,
+          rejectionReason: invoice.rejection_reason,
+          rejectedBy: invoice.rejected_by,
+          rejectedAt: invoice.rejected_at,
+        } : null,
+        reminderNotes: notes,
+        sentAt: new Date().toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send reminder');
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending reminder:', error);
+    throw new Error(error.message || 'Failed to send reminder email');
+  }
+}
