@@ -764,6 +764,7 @@ export async function updateContractorStatus(contractorId, isActive) {
 
 /**
  * Send summary notification to Chris (Level 2 approver)
+ * Includes all invoices pending Chris's approval (status = 'approval_1')
  */
 export async function sendChrisSummary(triggeredBy, payPeriodStart, payPeriodEnd) {
   if (!N8N_WEBHOOK_URL) {
@@ -771,6 +772,51 @@ export async function sendChrisSummary(triggeredBy, payPeriodStart, payPeriodEnd
   }
 
   try {
+    // Fetch all invoices pending Chris's approval
+    const { data: pendingInvoices, error: invoicesError } = await supabase
+      .from('invoices')
+      .select(`
+        *,
+        contractors (
+          id,
+          name,
+          email,
+          company,
+          url_token
+        )
+      `)
+      .eq('status', 'approval_1')
+      .order('submitted_at', { ascending: true });
+
+    if (invoicesError) {
+      console.error('Error fetching pending invoices:', invoicesError);
+      throw new Error('Failed to fetch pending invoices');
+    }
+
+    // Format invoices for the webhook payload
+    const formattedInvoices = (pendingInvoices || []).map(invoice => ({
+      id: invoice.id,
+      contractorName: invoice.contractors?.name,
+      contractorEmail: invoice.contractors?.email,
+      contractorCompany: invoice.contractors?.company,
+      payPeriodStart: invoice.pay_period_start,
+      payPeriodEnd: invoice.pay_period_end,
+      week1Hours: invoice.week_1_hours,
+      week1Rate: invoice.week_1_rate,
+      week1Notes: invoice.week_1_notes,
+      week2Hours: invoice.week_2_hours,
+      week2Rate: invoice.week_2_rate,
+      week2Notes: invoice.week_2_notes,
+      expenses: invoice.expenses ? (typeof invoice.expenses === 'string' ? JSON.parse(invoice.expenses) : invoice.expenses) : [],
+      expensesTotal: invoice.expenses_total || 0,
+      totalAmount: invoice.total_amount,
+      submittedAt: invoice.submitted_at,
+      approvedByNick: invoice.approval_1_by,
+      approvedByNickAt: invoice.approval_1_at,
+    }));
+
+    const totalPendingAmount = formattedInvoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
+
     const response = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -779,6 +825,9 @@ export async function sendChrisSummary(triggeredBy, payPeriodStart, payPeriodEnd
         triggeredBy,
         payPeriodStart,
         payPeriodEnd,
+        pendingInvoices: formattedInvoices,
+        totalPendingCount: formattedInvoices.length,
+        totalPendingAmount,
         sentAt: new Date().toISOString(),
       }),
     });
