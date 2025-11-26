@@ -479,6 +479,60 @@ export default function Admin() {
                   </p>
                 </div>
               </div>
+
+              {/* Expenses */}
+              {(() => {
+                const expenses = selectedInvoice.expenses ? (typeof selectedInvoice.expenses === 'string' ? JSON.parse(selectedInvoice.expenses) : selectedInvoice.expenses) : [];
+                const expensesTotal = selectedInvoice.expenses_total || 0;
+
+                if (expenses.length === 0) return null;
+
+                return (
+                  <div style={{ marginBottom: '24px' }}>
+                    <p style={{
+                      fontSize: '11px',
+                      fontWeight: '500',
+                      color: '#8a94a6',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      marginBottom: '12px'
+                    }}>
+                      Expenses (${expensesTotal.toFixed(2)})
+                    </p>
+                    <div style={{
+                      backgroundColor: '#1b2838',
+                      borderRadius: '8px',
+                      padding: '12px 16px'
+                    }}>
+                      {expenses.map((expense, index) => (
+                        <div key={index} style={{
+                          paddingTop: index > 0 ? '10px' : '0',
+                          paddingBottom: index < expenses.length - 1 ? '10px' : '0',
+                          borderTop: index > 0 ? '1px solid #2d3f50' : 'none'
+                        }}>
+                          <div className="flex justify-between items-start">
+                            <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500' }}>
+                              {expense.merchant || 'Unknown'}
+                            </span>
+                            <span style={{ fontSize: '14px', color: '#ffffff' }}>
+                              ${(parseFloat(expense.amount) || 0).toFixed(2)}
+                            </span>
+                          </div>
+                          {expense.description && (
+                            <p style={{ marginTop: '4px', fontSize: '12px', color: '#5a6478', fontStyle: 'italic' }}>
+                              {expense.description}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p style={{ marginTop: '8px', fontSize: '11px', color: '#5a6478', fontStyle: 'italic' }}>
+                      * Expenses are not subject to tax
+                    </p>
+                  </div>
+                );
+              })()}
+
               <div style={{ paddingTop: '20px', borderTop: '1px solid #2d3f50', marginBottom: '20px' }}>
                 <div className="flex justify-between items-center">
                   <p style={{ color: '#8a94a6', fontWeight: '500', fontSize: '14px' }}>Total</p>

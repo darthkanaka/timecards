@@ -14,6 +14,7 @@ const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd
 function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [showApproveModal, setShowApproveModal] = useState(false);
 
   const periodStart = new Date(invoice.pay_period_start + 'T00:00:00');
   const periodEnd = new Date(invoice.pay_period_end + 'T00:00:00');
@@ -27,6 +28,15 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
     onReject(invoice.id, rejectionReason);
     setShowRejectForm(false);
     setRejectionReason('');
+  };
+
+  const handleApproveClick = () => {
+    setShowApproveModal(true);
+  };
+
+  const handleConfirmApprove = () => {
+    setShowApproveModal(false);
+    onApprove(invoice.id);
   };
 
   return (
@@ -79,7 +89,7 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
         </div>
 
         {/* Week 2 */}
-        <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+        <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
           <div className="flex justify-between items-start" style={{ marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', color: '#8a94a6', fontWeight: '500' }}>Week 2</span>
             <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>
@@ -95,6 +105,47 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
             </p>
           )}
         </div>
+
+        {/* Expenses */}
+        {(() => {
+          const expenses = invoice.expenses ? (typeof invoice.expenses === 'string' ? JSON.parse(invoice.expenses) : invoice.expenses) : [];
+          const expensesTotal = invoice.expenses_total || 0;
+
+          if (expenses.length === 0) return null;
+
+          return (
+            <div style={{ backgroundColor: '#1b2838', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+              <div className="flex justify-between items-start" style={{ marginBottom: '12px' }}>
+                <span style={{ fontSize: '14px', color: '#8a94a6', fontWeight: '500' }}>Expenses</span>
+                <span style={{ fontSize: '16px', color: '#ffffff', fontWeight: '600' }}>
+                  ${expensesTotal.toFixed(2)}
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {expenses.map((expense, index) => (
+                  <div key={index} style={{ paddingTop: index > 0 ? '12px' : '0', borderTop: index > 0 ? '1px solid #2d3f50' : 'none' }}>
+                    <div className="flex justify-between items-start">
+                      <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: '500' }}>
+                        {expense.merchant || 'Unknown merchant'}
+                      </span>
+                      <span style={{ fontSize: '13px', color: '#ffffff' }}>
+                        ${(parseFloat(expense.amount) || 0).toFixed(2)}
+                      </span>
+                    </div>
+                    {expense.description && (
+                      <p style={{ marginTop: '6px', fontSize: '12px', color: '#8a94a6', fontStyle: 'italic' }}>
+                        "{expense.description}"
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <p style={{ marginTop: '12px', fontSize: '11px', color: '#5a6478', fontStyle: 'italic' }}>
+                * Expenses are not subject to tax
+              </p>
+            </div>
+          );
+        })()}
 
         {/* Totals */}
         <div style={{ borderTop: '1px solid #2d3f50', paddingTop: '16px' }}>
@@ -134,7 +185,7 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
         {!showRejectForm ? (
           <div className="flex gap-3">
             <button
-              onClick={() => onApprove(invoice.id)}
+              onClick={handleApproveClick}
               disabled={isProcessing}
               style={{
                 flex: 1,
@@ -242,6 +293,120 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
           </div>
         )}
       </div>
+
+      {/* Approval Confirmation Modal */}
+      {showApproveModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px'
+          }}
+          onClick={() => setShowApproveModal(false)}
+        >
+          <div
+            style={{
+              backgroundColor: '#0d1b2a',
+              border: '1px solid #2d3f50',
+              borderRadius: '12px',
+              padding: '32px',
+              maxWidth: '400px',
+              width: '100%',
+              textAlign: 'center'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(45, 90, 61, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px'
+            }}>
+              <svg style={{ width: '28px', height: '28px', color: '#4ade80' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: '#ffffff',
+              marginBottom: '12px'
+            }}>
+              Approve Timecard?
+            </h3>
+
+            <p style={{
+              fontSize: '14px',
+              color: '#8a94a6',
+              marginBottom: '8px'
+            }}>
+              {invoice.contractors?.name}
+            </p>
+            <p style={{
+              fontSize: '20px',
+              fontWeight: '700',
+              color: '#4ade80',
+              marginBottom: '24px'
+            }}>
+              ${(invoice.total_amount || 0).toFixed(2)}
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowApproveModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '14px 20px',
+                  borderRadius: '8px',
+                  fontWeight: '500',
+                  fontSize: '15px',
+                  color: '#ffffff',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #2d3f50',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Go Back
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmApprove}
+                disabled={isProcessing}
+                style={{
+                  flex: 1,
+                  padding: '14px 20px',
+                  borderRadius: '8px',
+                  fontWeight: '500',
+                  fontSize: '15px',
+                  color: '#ffffff',
+                  backgroundColor: '#2d5a3d',
+                  border: 'none',
+                  cursor: isProcessing ? 'not-allowed' : 'pointer',
+                  opacity: isProcessing ? 0.5 : 1,
+                  transition: 'all 0.2s'
+                }}
+              >
+                {isProcessing ? 'Processing...' : 'Approve'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
