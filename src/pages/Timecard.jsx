@@ -166,8 +166,8 @@ export default function Timecard() {
             src={BG_IMAGE_URL}
             alt=""
             style={{
-              width: '800px',
-              height: '1000px',
+              width: '1440px',
+              height: '1800px',
               objectFit: 'cover',
               objectPosition: 'center top',
               position: 'absolute',

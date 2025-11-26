@@ -116,8 +116,8 @@ export default function Admin() {
           src={BG_IMAGE_URL}
           alt=""
           style={{
-            width: '1600px',
-            height: '2000px',
+            width: '2560px',
+            height: '3200px',
             objectFit: 'cover',
             objectPosition: 'center top',
             position: 'absolute',
