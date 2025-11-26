@@ -69,11 +69,9 @@ export async function getContractorInvoices(contractorId) {
 }
 
 /**
- * Submit a timecard (create or update invoice)
+ * Submit a timecard (create or update invoice) for a specific pay period
  */
-export async function submitTimecard(contractorId, timecardData) {
-  const payPeriod = getCurrentPayPeriod();
-
+export async function submitTimecard(contractorId, timecardData, payPeriod) {
   const invoiceData = {
     contractor_id: contractorId,
     pay_period_start: toISODateString(payPeriod.periodStart),
@@ -94,8 +92,9 @@ export async function submitTimecard(contractorId, timecardData) {
     submitted_at: new Date().toISOString(),
   };
 
-  // Check if invoice already exists
-  const existing = await getCurrentInvoice(contractorId);
+  // Check if invoice already exists for this period
+  const periodStart = toISODateString(payPeriod.periodStart);
+  const existing = await getInvoiceForPeriod(contractorId, periodStart);
 
   let result;
   if (existing) {

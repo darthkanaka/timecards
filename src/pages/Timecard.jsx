@@ -1,28 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import TimecardForm from '../components/TimecardForm';
 import StatusTracker from '../components/StatusTracker';
 import InvoiceHistory from '../components/InvoiceHistory';
+import PayPeriodNav from '../components/PayPeriodNav';
+import InvoiceStatusBadge from '../components/InvoiceStatusBadge';
 import {
   getContractorByToken,
-  getCurrentInvoice,
+  getInvoiceForPeriod,
   getContractorInvoices,
   submitTimecard,
 } from '../lib/api';
+import {
+  getCurrentPayPeriod,
+  getPreviousPayPeriod,
+  getNextPayPeriod,
+  toISODateString,
+  isCurrentPeriod,
+  isFuturePeriod,
+} from '../lib/payPeriod';
 
 export default function Timecard() {
   const { token } = useParams();
   const [contractor, setContractor] = useState(null);
-  const [currentInvoice, setCurrentInvoice] = useState(null);
+  const [payPeriod, setPayPeriod] = useState(getCurrentPayPeriod());
+  const [invoice, setInvoice] = useState(null);
   const [invoiceHistory, setInvoiceHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [invoiceLoading, setInvoiceLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('form'); // 'form' or 'history'
 
+  // Load contractor data on mount
   useEffect(() => {
-    async function loadData() {
+    async function loadContractor() {
       try {
         setLoading(true);
         setError(null);
@@ -35,17 +48,9 @@ export default function Timecard() {
 
         setContractor(contractorData);
 
-        const [invoice, history] = await Promise.all([
-          getCurrentInvoice(contractorData.id),
-          getContractorInvoices(contractorData.id),
-        ]);
-
-        setCurrentInvoice(invoice);
-        // Filter out current period from history
-        const currentStart = invoice?.pay_period_start;
-        setInvoiceHistory(
-          history.filter((inv) => inv.pay_period_start !== currentStart)
-        );
+        // Load invoice history
+        const history = await getContractorInvoices(contractorData.id);
+        setInvoiceHistory(history);
       } catch (err) {
         console.error('Error loading data:', err);
         setError('Failed to load timecard data');
@@ -55,18 +60,55 @@ export default function Timecard() {
     }
 
     if (token) {
-      loadData();
+      loadContractor();
     }
   }, [token]);
+
+  // Load invoice when pay period or contractor changes
+  const loadInvoiceForPeriod = useCallback(async () => {
+    if (!contractor) return;
+
+    try {
+      setInvoiceLoading(true);
+      const periodStart = toISODateString(payPeriod.periodStart);
+      const invoiceData = await getInvoiceForPeriod(contractor.id, periodStart);
+      setInvoice(invoiceData);
+    } catch (err) {
+      console.error('Error loading invoice:', err);
+    } finally {
+      setInvoiceLoading(false);
+    }
+  }, [contractor, payPeriod]);
+
+  useEffect(() => {
+    loadInvoiceForPeriod();
+  }, [loadInvoiceForPeriod]);
+
+  const handlePreviousPeriod = () => {
+    setPayPeriod(getPreviousPayPeriod(payPeriod));
+    setSubmitSuccess(false);
+  };
+
+  const handleNextPeriod = () => {
+    const next = getNextPayPeriod(payPeriod);
+    if (!isFuturePeriod(next)) {
+      setPayPeriod(next);
+      setSubmitSuccess(false);
+    }
+  };
 
   const handleSubmit = async (formData) => {
     try {
       setIsSubmitting(true);
       setError(null);
 
-      const result = await submitTimecard(contractor.id, formData);
-      setCurrentInvoice(result);
+      const result = await submitTimecard(contractor.id, formData, payPeriod);
+      setInvoice(result);
       setSubmitSuccess(true);
+
+      // Update history
+      const history = await getContractorInvoices(contractor.id);
+      setInvoiceHistory(history);
 
       // Auto-hide success message after 5 seconds
       setTimeout(() => setSubmitSuccess(false), 5000);
@@ -76,6 +118,20 @@ export default function Timecard() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const getInvoiceStatus = () => {
+    if (!invoice) return 'not_submitted';
+    return invoice.status || 'not_submitted';
+  };
+
+  const canSubmit = () => {
+    // Can't submit future periods
+    if (isFuturePeriod(payPeriod)) return false;
+    // Can submit if no invoice or invoice is still pending
+    if (!invoice) return true;
+    if (invoice.status === 'pending') return true;
+    return false;
   };
 
   if (loading) {
@@ -121,13 +177,33 @@ export default function Timecard() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
             Contractor Timecard
           </h1>
           <p className="text-gray-600 mt-1">
             Welcome back, {contractor?.name}
           </p>
+        </div>
+
+        {/* Pay Period Navigation */}
+        <div className="mb-4">
+          <PayPeriodNav
+            payPeriod={payPeriod}
+            onPrevious={handlePreviousPeriod}
+            onNext={handleNextPeriod}
+          />
+        </div>
+
+        {/* Invoice Status Badge */}
+        <div className="mb-6">
+          {invoiceLoading ? (
+            <div className="bg-gray-100 border border-gray-200 rounded-lg p-4 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-32"></div>
+            </div>
+          ) : (
+            <InvoiceStatusBadge status={getInvoiceStatus()} />
+          )}
         </div>
 
         {/* Success Message */}
@@ -176,7 +252,7 @@ export default function Timecard() {
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            Current Period
+            Timecard
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -192,16 +268,16 @@ export default function Timecard() {
 
         {activeTab === 'form' ? (
           <div className="space-y-6">
-            {/* Status Tracker */}
-            {currentInvoice && currentInvoice.status !== 'pending' && (
+            {/* Status Tracker (detailed view for submitted invoices) */}
+            {invoice && invoice.status && invoice.status !== 'pending' && invoice.status !== 'not_submitted' && (
               <StatusTracker
-                status={currentInvoice.status}
+                status={invoice.status}
                 timestamps={{
-                  submitted: currentInvoice.submitted_at,
-                  approval_1: currentInvoice.approval_1_at,
-                  approval_2: currentInvoice.approval_2_at,
-                  pending_payment: currentInvoice.approval_2_at,
-                  paid: currentInvoice.paid_at,
+                  submitted: invoice.submitted_at,
+                  approval_1: invoice.approval_1_at,
+                  approval_2: invoice.approval_2_at,
+                  pending_payment: invoice.approval_2_at,
+                  paid: invoice.paid_at,
                 }}
               />
             )}
@@ -209,17 +285,32 @@ export default function Timecard() {
             {/* Timecard Form */}
             <TimecardForm
               contractor={contractor}
-              existingInvoice={currentInvoice}
+              payPeriod={payPeriod}
+              existingInvoice={invoice}
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}
+              readOnly={!canSubmit()}
             />
           </div>
         ) : (
           <InvoiceHistory
             invoices={invoiceHistory}
-            onSelect={(invoice) => {
-              // Could show a modal with invoice details
-              console.log('Selected invoice:', invoice);
+            onSelect={(selectedInvoice) => {
+              // Navigate to that pay period
+              const periodStart = new Date(selectedInvoice.pay_period_start + 'T00:00:00');
+              setPayPeriod({
+                periodStart,
+                periodEnd: new Date(selectedInvoice.pay_period_end + 'T00:00:00'),
+                week1: {
+                  start: new Date(selectedInvoice.week_1_start + 'T00:00:00'),
+                  end: new Date(selectedInvoice.week_1_end + 'T00:00:00'),
+                },
+                week2: {
+                  start: new Date(selectedInvoice.week_2_start + 'T00:00:00'),
+                  end: new Date(selectedInvoice.week_2_end + 'T00:00:00'),
+                },
+              });
+              setActiveTab('form');
             }}
           />
         )}
