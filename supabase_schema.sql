@@ -159,8 +159,8 @@ INSERT INTO contractors (name, email, company, address, phone, default_hourly_ra
 
 -- Sample approvers (customize these for your organization)
 INSERT INTO admin_users (name, email, url_token, approval_level) VALUES
-  ('Nick', 'nick@company.com', 'nick-approve', 1),
-  ('Chris', 'chris@company.com', 'chris-approve', 2);
+  ('Nick', 'nick@invizarts.com', 'nick-approve', 1),
+  ('Chris', 'cmapes@invizarts.com', 'chris-approve', 2);
 
 -- ===========================================
 -- MIGRATION: Run these on existing database
@@ -197,6 +197,6 @@ ALTER TABLE invoices ADD CONSTRAINT invoices_status_check
 
 -- Insert sample approvers
 INSERT INTO admin_users (name, email, url_token, approval_level) VALUES
-  ('Nick', 'nick@company.com', 'nick-approve', 1),
-  ('Chris', 'chris@company.com', 'chris-approve', 2);
+  ('Nick', 'nick@invizarts.com', 'nick-approve', 1),
+  ('Chris', 'cmapes@invizarts.com', 'chris-approve', 2);
 */
