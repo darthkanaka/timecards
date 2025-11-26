@@ -3,8 +3,8 @@ import { formatDateRange } from '../lib/payPeriod';
 const STATUS_LABELS = {
   pending: { label: 'Pending', color: 'bg-status-warning text-status-warning-text' },
   submitted: { label: 'Submitted', color: 'bg-status-info text-status-info-text' },
-  approval_1: { label: 'First Approval', color: 'bg-purple-900/50 text-purple-400' },
-  approval_2: { label: 'Second Approval', color: 'bg-indigo-900/50 text-indigo-400' },
+  approval_1: { label: 'Initial (1/2)', color: 'bg-purple-900/50 text-purple-400' },
+  approval_2: { label: 'Final (2/2)', color: 'bg-indigo-900/50 text-indigo-400' },
   pending_payment: { label: 'Payment Processing', color: 'bg-status-warning text-status-warning-text' },
   paid: { label: 'Paid', color: 'bg-status-success text-status-success-text' },
   rejected: { label: 'Rejected', color: 'bg-status-error text-status-error-text' },

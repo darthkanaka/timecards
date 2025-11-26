@@ -120,7 +120,7 @@ function InvoiceCard({ invoice, approver, onApprove, onReject, isProcessing }) {
         {approver.approval_level === 2 && invoice.approval_1_by && (
           <div style={{ backgroundColor: 'rgba(45, 74, 90, 0.3)', borderRadius: '8px', padding: '16px', marginTop: '20px' }}>
             <p style={{ fontSize: '14px', color: '#60a5fa' }}>
-              <span style={{ fontWeight: '500' }}>First Approval:</span> {invoice.approval_1_by}
+              <span style={{ fontWeight: '500' }}>Nick (1/2):</span> {invoice.approval_1_by}
             </p>
             <p style={{ fontSize: '12px', color: 'rgba(96, 165, 250, 0.7)', marginTop: '4px' }}>
               {new Date(invoice.approval_1_at).toLocaleString()}
@@ -424,7 +424,7 @@ export default function ApproverDashboard() {
     );
   }
 
-  const levelLabel = approver?.approval_level === 1 ? 'First' : 'Final';
+  const levelLabel = approver?.approval_level === 1 ? 'Nick (1/2)' : 'Chris (2/2)';
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'transparent' }}>
@@ -498,7 +498,7 @@ export default function ApproverDashboard() {
               </div>
               <div className="text-right hidden sm:block">
                 <p style={{ fontSize: '16px', color: '#ffffff', fontWeight: '500' }}>{approver?.name}</p>
-                <p style={{ fontSize: '13px', color: '#8a94a6' }}>{levelLabel} Approver</p>
+                <p style={{ fontSize: '13px', color: '#8a94a6' }}>{levelLabel}</p>
               </div>
             </div>
 

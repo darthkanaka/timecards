@@ -1,7 +1,7 @@
 const STATUS_STEPS = [
   { key: 'submitted', label: 'Submitted', description: 'Timecard submitted' },
-  { key: 'approval_1', label: 'First Approval', description: 'Awaiting first approval' },
-  { key: 'approval_2', label: 'Second Approval', description: 'Awaiting second approval' },
+  { key: 'approval_1', label: 'Initial (1/2)', description: 'Awaiting initial approval' },
+  { key: 'approval_2', label: 'Final (2/2)', description: 'Awaiting final approval' },
   { key: 'pending_payment', label: 'Payment Processing', description: 'Approved, payment in process' },
   { key: 'paid', label: 'Paid', description: 'Payment complete' },
 ];

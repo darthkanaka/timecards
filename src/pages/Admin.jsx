@@ -16,8 +16,8 @@ const BG_IMAGE_URL = "https://images.squarespace-cdn.com/content/57e6cc979de4bbd
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
   { value: 'submitted', label: 'Submitted' },
-  { value: 'approval_1', label: 'First Approval' },
-  { value: 'approval_2', label: 'Second Approval' },
+  { value: 'approval_1', label: 'Nick (1/2)' },
+  { value: 'approval_2', label: 'Chris (2/2)' },
   { value: 'pending_payment', label: 'Payment Processing' },
   { value: 'paid', label: 'Paid' },
   { value: 'rejected', label: 'Rejected' },
@@ -485,7 +485,7 @@ export default function Admin() {
               {selectedInvoice.approval_1_at && (
                 <div style={{ fontSize: '12px', color: '#5a6478', marginBottom: '8px' }}>
                   <p>
-                    1st Approval: {new Date(selectedInvoice.approval_1_at).toLocaleString()}
+                    Nick (1/2): {new Date(selectedInvoice.approval_1_at).toLocaleString()}
                     {selectedInvoice.approval_1_by && ` by ${selectedInvoice.approval_1_by}`}
                   </p>
                 </div>
@@ -493,7 +493,7 @@ export default function Admin() {
               {selectedInvoice.approval_2_at && (
                 <div style={{ fontSize: '12px', color: '#5a6478', marginBottom: '20px' }}>
                   <p>
-                    2nd Approval: {new Date(selectedInvoice.approval_2_at).toLocaleString()}
+                    Chris (2/2): {new Date(selectedInvoice.approval_2_at).toLocaleString()}
                     {selectedInvoice.approval_2_by && ` by ${selectedInvoice.approval_2_by}`}
                   </p>
                 </div>
