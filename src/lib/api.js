@@ -71,7 +71,7 @@ export async function getContractorInvoices(contractorId) {
 /**
  * Submit a timecard (create or update invoice) for a specific pay period
  */
-export async function submitTimecard(contractorId, timecardData, payPeriod) {
+export async function submitTimecard(contractorId, timecardData, payPeriod, isResubmission = false) {
   const invoiceData = {
     contractor_id: contractorId,
     pay_period_start: toISODateString(payPeriod.periodStart),
@@ -92,6 +92,17 @@ export async function submitTimecard(contractorId, timecardData, payPeriod) {
     status: 'submitted',
     submitted_at: new Date().toISOString(),
   };
+
+  // If resubmission after rejection, clear approval and rejection fields
+  if (isResubmission) {
+    invoiceData.approval_1_at = null;
+    invoiceData.approval_1_by = null;
+    invoiceData.approval_2_at = null;
+    invoiceData.approval_2_by = null;
+    invoiceData.rejection_reason = null;
+    invoiceData.rejected_by = null;
+    invoiceData.rejected_at = null;
+  }
 
   // Check if invoice already exists for this period
   const periodStart = toISODateString(payPeriod.periodStart);
@@ -337,4 +348,213 @@ export async function getPayPeriodSummary(payPeriodStart) {
     totalAmount,
     allSubmitted: notSubmitted.length === 0 && (contractors?.length || 0) > 0,
   };
+}
+
+// ==================== Approver API Functions ====================
+
+/**
+ * Get approver by URL token
+ */
+export async function getApproverByToken(token) {
+  const { data, error } = await supabase
+    .from('admin_users')
+    .select('*')
+    .eq('url_token', token)
+    .eq('is_active', true)
+    .single();
+
+  if (error) {
+    console.error('Error fetching approver:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Get invoices pending approval for a specific approval level
+ */
+export async function getInvoicesPendingApproval(approvalLevel) {
+  // Level 1 approvers see 'submitted' invoices
+  // Level 2 approvers see 'approval_1' invoices
+  const statusToView = approvalLevel === 1 ? 'submitted' : 'approval_1';
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .select(`
+      *,
+      contractors (
+        id,
+        name,
+        email,
+        company,
+        url_token
+      )
+    `)
+    .eq('status', statusToView)
+    .order('submitted_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching pending invoices:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Approve an invoice (level 1 or level 2)
+ */
+export async function approveInvoice(invoiceId, approverName, approvalLevel) {
+  const invoice = await getInvoiceById(invoiceId);
+  if (!invoice) {
+    throw new Error('Invoice not found');
+  }
+
+  // Validate correct status for this approval level
+  if (approvalLevel === 1 && invoice.status !== 'submitted') {
+    throw new Error('Invoice is not awaiting first approval');
+  }
+  if (approvalLevel === 2 && invoice.status !== 'approval_1') {
+    throw new Error('Invoice is not awaiting second approval');
+  }
+
+  const updateData = {};
+  let newStatus;
+
+  if (approvalLevel === 1) {
+    newStatus = 'approval_1';
+    updateData.status = newStatus;
+    updateData.approval_1_at = new Date().toISOString();
+    updateData.approval_1_by = approverName;
+  } else {
+    newStatus = 'approval_2';
+    updateData.status = newStatus;
+    updateData.approval_2_at = new Date().toISOString();
+    updateData.approval_2_by = approverName;
+  }
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .update(updateData)
+    .eq('id', invoiceId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error approving invoice:', error);
+    throw new Error('Failed to approve invoice');
+  }
+
+  // Trigger n8n webhook for approval notification
+  if (N8N_WEBHOOK_URL) {
+    try {
+      await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'invoice_approved',
+          invoice: data,
+          approverName,
+          approvalLevel,
+          previousStatus: invoice.status,
+          newStatus,
+          contractorEmail: invoice.contractors?.email,
+          contractorTimecardUrl: invoice.contractors?.url_token,
+        }),
+      });
+    } catch (webhookError) {
+      console.warn('Failed to trigger webhook:', webhookError);
+    }
+  }
+
+  return data;
+}
+
+/**
+ * Reject an invoice
+ */
+export async function rejectInvoice(invoiceId, approverName, rejectionReason) {
+  const invoice = await getInvoiceById(invoiceId);
+  if (!invoice) {
+    throw new Error('Invoice not found');
+  }
+
+  // Can only reject submitted or approval_1 invoices
+  if (!['submitted', 'approval_1'].includes(invoice.status)) {
+    throw new Error('Invoice cannot be rejected at this stage');
+  }
+
+  const updateData = {
+    status: 'rejected',
+    rejection_reason: rejectionReason,
+    rejected_by: approverName,
+    rejected_at: new Date().toISOString(),
+  };
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .update(updateData)
+    .eq('id', invoiceId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error rejecting invoice:', error);
+    throw new Error('Failed to reject invoice');
+  }
+
+  // Trigger n8n webhook for rejection notification
+  if (N8N_WEBHOOK_URL) {
+    try {
+      await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'invoice_rejected',
+          invoice: data,
+          approverName,
+          rejectionReason,
+          previousStatus: invoice.status,
+          contractorEmail: invoice.contractors?.email,
+          contractorTimecardUrl: invoice.contractors?.url_token,
+        }),
+      });
+    } catch (webhookError) {
+      console.warn('Failed to trigger webhook:', webhookError);
+    }
+  }
+
+  return data;
+}
+
+/**
+ * Get recent approver activity (approved/rejected today)
+ */
+export async function getApproverActivity(approverName, limit = 10) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayISO = today.toISOString();
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .select(`
+      *,
+      contractors (
+        id,
+        name,
+        company
+      )
+    `)
+    .or(`approval_1_by.eq.${approverName},approval_2_by.eq.${approverName},rejected_by.eq.${approverName}`)
+    .gte('updated_at', todayISO)
+    .order('updated_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching approver activity:', error);
+    return [];
+  }
+
+  return data || [];
 }

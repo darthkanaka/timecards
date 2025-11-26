@@ -102,7 +102,7 @@ export default function Timecard() {
       setIsSubmitting(true);
       setError(null);
 
-      const result = await submitTimecard(contractor.id, formData, payPeriod);
+      const result = await submitTimecard(contractor.id, formData, payPeriod, isResubmission());
       setInvoice(result);
       setSubmitSuccess(true);
 
@@ -131,7 +131,13 @@ export default function Timecard() {
     // Can submit if no invoice or invoice is still pending
     if (!invoice) return true;
     if (invoice.status === 'pending') return true;
+    // Can resubmit if invoice was rejected
+    if (invoice.status === 'rejected') return true;
     return false;
+  };
+
+  const isResubmission = () => {
+    return invoice?.status === 'rejected';
   };
 
   if (loading) {
@@ -226,7 +232,7 @@ export default function Timecard() {
             </div>
             <div>
               <p className="font-medium text-green-800">
-                Timecard submitted successfully!
+                Timecard {invoice?.status === 'submitted' ? 'submitted' : 'resubmitted'} successfully!
               </p>
               <p className="text-sm text-green-700">
                 You will receive a confirmation email shortly.
@@ -279,6 +285,11 @@ export default function Timecard() {
                   pending_payment: invoice.approval_2_at,
                   paid: invoice.paid_at,
                 }}
+                rejectionInfo={{
+                  reason: invoice.rejection_reason,
+                  rejectedBy: invoice.rejected_by,
+                  rejectedAt: invoice.rejected_at,
+                }}
               />
             )}
 
@@ -290,6 +301,7 @@ export default function Timecard() {
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}
               readOnly={!canSubmit()}
+              isResubmission={isResubmission()}
             />
           </div>
         ) : (

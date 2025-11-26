@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Timecard from './pages/Timecard';
 import Admin from './pages/Admin';
+import ApproverDashboard from './pages/ApproverDashboard';
 import './index.css';
 
 function HomePage() {
@@ -67,6 +68,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/timecard/:token" element={<Timecard />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/approve/:token" element={<ApproverDashboard />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
