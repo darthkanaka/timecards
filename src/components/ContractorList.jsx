@@ -134,7 +134,7 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
                   }}>
                     /timecard/{contractor.url_token}
                   </code>
-                  {onSendReminder && (
+                  {onSendReminder && hasNotSubmitted && (
                     <button
                       onClick={() => onSendReminder(contractor)}
                       style={{
