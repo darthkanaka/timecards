@@ -22,6 +22,8 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
   }
 
   const notSubmittedIds = new Set(notSubmitted.map((c) => c.id));
+  const activeContractors = contractors?.filter(c => c.is_active) || [];
+  const inactiveContractors = contractors?.filter(c => !c.is_active) || [];
 
   return (
     <div style={{
@@ -47,7 +49,7 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
           Contractors
         </h3>
         <span style={{ fontSize: '12px', color: '#5a6478' }}>
-          {contractors?.length || 0} total
+          {activeContractors.length} active{inactiveContractors.length > 0 ? `, ${inactiveContractors.length} inactive` : ''}
         </span>
       </div>
 
@@ -73,7 +75,8 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
           </div>
         ) : (
           contractors.map((contractor, idx) => {
-            const hasNotSubmitted = notSubmittedIds.has(contractor.id);
+            const isInactive = !contractor.is_active;
+            const hasNotSubmitted = !isInactive && notSubmittedIds.has(contractor.id);
 
             return (
               <div
@@ -81,18 +84,32 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
                 style={{
                   padding: '16px',
                   borderBottom: idx < contractors.length - 1 ? '1px solid #2d3f50' : 'none',
-                  backgroundColor: hasNotSubmitted ? 'rgba(251, 191, 36, 0.08)' : 'transparent'
+                  backgroundColor: hasNotSubmitted ? 'rgba(251, 191, 36, 0.08)' : 'transparent',
+                  opacity: isInactive ? 0.5 : 1
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#ffffff' }}>
+                    <p style={{ fontSize: '14px', fontWeight: '500', color: isInactive ? '#8a94a6' : '#ffffff' }}>
                       {contractor.name}
                     </p>
                     <p style={{ fontSize: '12px', color: '#5a6478' }}>{contractor.email}</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    {hasNotSubmitted ? (
+                    {isInactive ? (
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        backgroundColor: 'rgba(90, 100, 120, 0.2)',
+                        color: '#8a94a6',
+                        borderRadius: '9999px'
+                      }}>
+                        Inactive
+                      </span>
+                    ) : hasNotSubmitted ? (
                       <span style={{
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -134,7 +151,7 @@ export default function ContractorList({ contractors, notSubmitted = [], isLoadi
                   }}>
                     /timecard/{contractor.url_token}
                   </code>
-                  {onSendReminder && hasNotSubmitted && (
+                  {onSendReminder && hasNotSubmitted && !isInactive && (
                     <button
                       onClick={() => onSendReminder(contractor)}
                       style={{
