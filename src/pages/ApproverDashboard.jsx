@@ -427,6 +427,7 @@ export default function ApproverDashboard() {
   const [reminderPayPeriod, setReminderPayPeriod] = useState(null);
   const [showChrisSummaryModal, setShowChrisSummaryModal] = useState(false);
   const [chrisSummaryCooldown, setChrisSummaryCooldown] = useState(false);
+  const [showInfoTooltip, setShowInfoTooltip] = useState(false);
 
   const currentPayPeriod = getCurrentPayPeriod();
 
@@ -814,12 +815,46 @@ export default function ApproverDashboard() {
                   <div style={{ position: 'relative' }}>
                     <div
                       style={{ cursor: 'help' }}
-                      title="Sends Chris an email with all approved timecards, even if some contractors haven't submitted yet"
+                      onMouseEnter={() => setShowInfoTooltip(true)}
+                      onMouseLeave={() => setShowInfoTooltip(false)}
                     >
                       <svg style={{ width: '16px', height: '16px', color: '#5a6478' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
+                    {showInfoTooltip && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '100%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        marginBottom: '8px',
+                        padding: '8px 12px',
+                        backgroundColor: '#1b2838',
+                        border: '1px solid #2d3f50',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        color: '#ffffff',
+                        whiteSpace: 'nowrap',
+                        zIndex: 100,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                      }}>
+                        Sends Chris an email with all approved timecards,
+                        <br />
+                        even if some contractors haven't submitted yet
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '-6px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: '0',
+                          height: '0',
+                          borderLeft: '6px solid transparent',
+                          borderRight: '6px solid transparent',
+                          borderTop: '6px solid #2d3f50'
+                        }}></div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
