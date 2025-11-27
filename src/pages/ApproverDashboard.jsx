@@ -812,10 +812,15 @@ export default function ApproverDashboard() {
                     </svg>
                     Send Summary to Chris
                   </button>
-                  <div style={{ position: 'relative' }} className="group">
-                    <svg style={{ width: '16px', height: '16px', color: '#5a6478', cursor: 'help' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                  <div style={{ position: 'relative' }}>
+                    <div
+                      style={{ cursor: 'help' }}
+                      title="Use this if the automatic notification didn't trigger, such as after marking a contractor inactive"
+                    >
+                      <svg style={{ width: '16px', height: '16px', color: '#5a6478' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
