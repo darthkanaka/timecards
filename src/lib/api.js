@@ -751,15 +751,19 @@ export async function updateContractorStatus(contractorId, isActive) {
     .from('contractors')
     .update({ is_active: isActive })
     .eq('id', contractorId)
-    .select()
-    .single();
+    .select();
 
   if (error) {
     console.error('Error updating contractor status:', error);
     throw new Error(error.message || 'Failed to update contractor status');
   }
 
-  return data;
+  // Check if any rows were updated
+  if (!data || data.length === 0) {
+    throw new Error('Contractor not found or update not permitted. Check Supabase RLS policies.');
+  }
+
+  return data[0];
 }
 
 /**
